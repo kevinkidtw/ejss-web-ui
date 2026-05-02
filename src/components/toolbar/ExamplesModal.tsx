@@ -16,6 +16,10 @@ const PREVIEW_ICON: Record<string, string> = {
   damped:     '📉',
   orbit:      '🪐',
   threebody:  '✴️',
+  doublepend: '🎭',
+  cyclotron:  '🌀',
+  snell:      '💡',
+  idealgas:   '⚗️',
 };
 
 interface Props {
