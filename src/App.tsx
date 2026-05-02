@@ -91,10 +91,10 @@ export default function App() {
         {/* Left: block palette (top) + element list / backdrop tabs (bottom) */}
         {!stageFullscreen && (
           <div className="w-52 flex flex-col flex-shrink-0 border-r border-gray-700 overflow-hidden min-h-0">
-            <div className="flex-1 overflow-hidden min-h-0">
+            <div className="flex-shrink-0 overflow-y-auto max-h-[56%]">
               <BlockPalette />
             </div>
-            <div className="h-[42%] flex-shrink-0 border-t border-gray-700 overflow-hidden min-h-0">
+            <div className="flex-1 border-t border-gray-700 overflow-hidden min-h-0">
               <SpriteList />
             </div>
           </div>

@@ -127,25 +127,23 @@ export default function SpriteList() {
   return (
     <div className="bg-gray-900 flex flex-col overflow-hidden h-full">
       {/* Tab bar */}
-      <div className="flex items-center bg-gray-950 border-b border-gray-700 flex-shrink-0">
-        <button
-          onClick={() => setActiveTab('elements')}
-          className={`flex-1 py-1.5 text-xs font-medium transition-colors border-b-2
-            ${activeTab === 'elements' ? 'border-purple-400 text-white' : 'border-transparent text-gray-400 hover:text-white'}`}
-        >
-          元件列表
-        </button>
-        <button
-          onClick={() => setActiveTab('backdrop')}
-          className={`flex-1 py-1.5 text-xs font-medium transition-colors border-b-2
-            ${activeTab === 'backdrop' ? 'border-purple-400 text-white' : 'border-transparent text-gray-400 hover:text-white'}`}
-        >
-          背景模板
-        </button>
+      <div className="flex items-center bg-gray-950 border-b border-gray-700 flex-shrink-0 px-1 gap-0.5 pt-1">
+        {(['elements', 'backdrop'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 pb-1.5 pt-1 text-[11px] font-medium rounded-t transition-colors border-b-2
+              ${activeTab === tab
+                ? 'border-purple-400 text-white'
+                : 'border-transparent text-gray-500 hover:text-gray-300'}`}
+          >
+            {tab === 'elements' ? '元件列表' : '背景模板'}
+          </button>
+        ))}
         {activeTab === 'elements' && (
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-1 bg-purple-600 hover:bg-purple-500 text-white rounded px-2 py-0.5 text-xs transition-colors mr-1.5 flex-shrink-0"
+            className="flex items-center gap-0.5 bg-purple-600 hover:bg-purple-500 text-white rounded px-1.5 py-0.5 text-[10px] font-bold transition-colors mb-1 flex-shrink-0"
           >
             <Plus className="w-3 h-3" /> 新增
           </button>
@@ -159,8 +157,9 @@ export default function SpriteList() {
       ) : (
       <div className="flex-1 overflow-y-auto min-h-0">
         {topLevel.length === 0 ? (
-          <div className="flex items-center justify-center h-16 text-gray-600 text-xs">
-            點擊「新增」加入元件
+          <div className="flex flex-col items-center justify-center gap-1.5 py-6 text-center px-3">
+            <span className="text-2xl opacity-30">🖼</span>
+            <p className="text-gray-600 text-[10px] leading-snug">尚無元件<br />點擊上方「新增」加入畫布元件</p>
           </div>
         ) : (
           <div className="flex flex-col gap-1 p-2">
