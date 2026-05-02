@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useSimulationStore } from '../../store/simulationStore';
 import ELEMENT_SCHEMAS from '../../constants/elementSchemas';
 import { BACKDROP_TEMPLATES } from '../../constants/backdropTemplates';
@@ -112,7 +112,7 @@ function BackdropPanel() {
 export default function SpriteList() {
   const { viewElements, selectedElementId, setSelectedElement, removeViewElement } = useSimulationStore();
   const [showModal, setShowModal] = useState(false);
-  const [showBackdrops, setShowBackdrops] = useState(false);
+  const [activeTab, setActiveTab] = useState<'elements' | 'backdrop'>('elements');
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
   const topLevel = viewElements.filter((e) => !e.parent || !viewElements.find((p) => p.name === e.parent));
@@ -125,19 +125,38 @@ export default function SpriteList() {
   };
 
   return (
-    <div className="bg-gray-900 border-t border-gray-700 flex flex-col flex-shrink-0 overflow-hidden" style={{ maxHeight: '55%' }}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-gray-950 border-b border-gray-700 flex-shrink-0">
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">元件列表</span>
+    <div className="bg-gray-900 flex flex-col overflow-hidden h-full">
+      {/* Tab bar */}
+      <div className="flex items-center bg-gray-950 border-b border-gray-700 flex-shrink-0">
         <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-1 bg-purple-600 hover:bg-purple-500 text-white rounded px-2 py-0.5 text-xs transition-colors"
+          onClick={() => setActiveTab('elements')}
+          className={`flex-1 py-1.5 text-xs font-medium transition-colors border-b-2
+            ${activeTab === 'elements' ? 'border-purple-400 text-white' : 'border-transparent text-gray-400 hover:text-white'}`}
         >
-          <Plus className="w-3 h-3" /> 新增
+          元件列表
         </button>
+        <button
+          onClick={() => setActiveTab('backdrop')}
+          className={`flex-1 py-1.5 text-xs font-medium transition-colors border-b-2
+            ${activeTab === 'backdrop' ? 'border-purple-400 text-white' : 'border-transparent text-gray-400 hover:text-white'}`}
+        >
+          背景模板
+        </button>
+        {activeTab === 'elements' && (
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-1 bg-purple-600 hover:bg-purple-500 text-white rounded px-2 py-0.5 text-xs transition-colors mr-1.5 flex-shrink-0"
+          >
+            <Plus className="w-3 h-3" /> 新增
+          </button>
+        )}
       </div>
 
-      {/* Sprite cards — flex-wrap auto-wraps like word processor */}
+      {activeTab === 'backdrop' ? (
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <BackdropPanel />
+        </div>
+      ) : (
       <div className="flex-1 overflow-y-auto min-h-0">
         {topLevel.length === 0 ? (
           <div className="flex items-center justify-center h-16 text-gray-600 text-xs">
@@ -208,20 +227,6 @@ export default function SpriteList() {
           </div>
         )}
       </div>
-
-      {/* Backdrop toggle */}
-      <button
-        onClick={() => setShowBackdrops((v) => !v)}
-        className="flex items-center justify-between px-3 py-1 bg-gray-800 hover:bg-gray-700 border-t border-gray-700 text-xs text-gray-400 transition-colors flex-shrink-0"
-      >
-        <span>🖼 背景模板</span>
-        {showBackdrops ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-      </button>
-
-      {showBackdrops && (
-        <div className="border-t border-gray-700 overflow-y-auto flex-shrink-0 max-h-48">
-          <BackdropPanel />
-        </div>
       )}
 
       {showModal && <AddElementModal onClose={() => setShowModal(false)} />}

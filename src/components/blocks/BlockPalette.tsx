@@ -55,7 +55,7 @@ export default function BlockPalette() {
   };
 
   return (
-    <aside className="w-52 bg-gray-800 text-white flex flex-col overflow-y-auto flex-shrink-0">
+    <aside className="w-full h-full bg-gray-800 text-white flex flex-col overflow-y-auto">
       <div className="p-2 bg-gray-900 text-xs font-bold uppercase tracking-wide text-gray-400">積木面板</div>
 
       {/* Context label */}

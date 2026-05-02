@@ -80,8 +80,17 @@ export default function App() {
       <Toolbar stageOpen={stageFullscreen} onToggleStage={handleToggleStage} />
 
       <div className="flex flex-1 overflow-hidden min-h-0">
-        {/* Left: block palette */}
-        {!stageFullscreen && <BlockPalette />}
+        {/* Left: block palette (top) + element list / backdrop tabs (bottom) */}
+        {!stageFullscreen && (
+          <div className="w-52 flex flex-col flex-shrink-0 border-r border-gray-700 overflow-hidden min-h-0">
+            <div className="flex-1 overflow-hidden min-h-0">
+              <BlockPalette />
+            </div>
+            <div className="h-[42%] flex-shrink-0 border-t border-gray-700 overflow-hidden min-h-0">
+              <SpriteList />
+            </div>
+          </div>
+        )}
 
         {/* Center: tabs */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0 min-h-0">
@@ -123,15 +132,10 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right: stage (top) + sprite list (bottom) — hidden during fullscreen stage */}
+        {/* Right: simulation stage only */}
         {!stageFullscreen && (
           <div className="flex flex-col border-l border-gray-700 flex-shrink-0 w-[480px] min-h-0">
-            {/* Stage preview — fills upper portion */}
-            <div className="flex-1 min-h-0">
-              <StagePanel />
-            </div>
-            {/* Sprite list — wraps, scrollable */}
-            <SpriteList />
+            <StagePanel />
           </div>
         )}
       </div>
