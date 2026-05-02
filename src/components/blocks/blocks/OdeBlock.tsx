@@ -20,39 +20,47 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
   const fx = useFxInsert(expression, onExprChange);
 
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-blue-100 text-xs font-mono">d[</span>
-      <input
-        className="bg-blue-400 text-white font-mono text-sm px-2 py-0.5 rounded w-20 border border-blue-300"
-        value={state}
-        placeholder="x"
-        onChange={(e) => onStateChange(e.target.value)}
-      />
-      <span className="text-blue-100 text-xs font-mono">]/dt =</span>
-      <input
-        className="bg-blue-400 text-white font-mono text-sm px-2 py-0.5 rounded flex-1 border border-blue-300"
-        value={expression}
-        placeholder="vx"
-        onChange={(e) => onExprChange(e.target.value)}
-        {...fx.trackProps}
-      />
-      <button
-        onClick={fx.openPicker}
-        title="插入數學函數"
-        className="text-blue-200 hover:text-white text-xs font-bold px-1 transition-colors flex-shrink-0"
-      >
-        𝑓𝑥
-      </button>
-      {fx.pickerAnchor && (
-        <MathFunctionPicker
-          anchor={fx.pickerAnchor}
-          onSelect={fx.insert}
-          onClose={fx.closePicker}
+    <div className="space-y-0.5">
+      {/* d[state]/dt = label row */}
+      <div className="flex items-center gap-1">
+        <span className="text-blue-100 text-xs font-mono flex-shrink-0">d[</span>
+        <input
+          className="bg-blue-400 text-white font-mono text-sm px-1.5 py-0.5 rounded w-14 border border-blue-300 flex-shrink-0"
+          value={state}
+          placeholder="x"
+          onChange={(e) => onStateChange(e.target.value)}
         />
-      )}
-      <button onClick={onRemove} className="text-blue-200 hover:text-red-300 transition-colors">
-        <Trash2 className="w-3.5 h-3.5" />
-      </button>
+        <span className="text-blue-100 text-xs font-mono flex-shrink-0">]/dt =</span>
+      </div>
+      {/* expression row — textarea auto-expands on long input */}
+      <div className="flex items-start gap-1">
+        <textarea
+          className="bg-blue-400 text-white font-mono text-xs px-1.5 py-0.5 rounded flex-1 min-w-0 border border-blue-300 resize-none overflow-hidden leading-relaxed"
+          rows={1}
+          style={{ fieldSizing: 'content' } as React.CSSProperties}
+          value={expression}
+          placeholder="vx"
+          onChange={(e) => onExprChange(e.target.value)}
+          {...fx.trackProps}
+        />
+        <button
+          onClick={fx.openPicker}
+          title="插入數學函數"
+          className="text-blue-200 hover:text-white text-xs font-bold px-1 transition-colors flex-shrink-0 mt-0.5"
+        >
+          𝑓𝑥
+        </button>
+        {fx.pickerAnchor && (
+          <MathFunctionPicker
+            anchor={fx.pickerAnchor}
+            onSelect={fx.insert}
+            onClose={fx.closePicker}
+          />
+        )}
+        <button onClick={onRemove} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0 mt-0.5">
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -61,38 +69,47 @@ export default function OdeBlock({ page }: { page: OdePage }) {
   const { updateOdePage, addOdeRate, updateOdeRate, removeOdeRate, removeOdePage } = useSimulationStore();
 
   return (
-    <div className="bg-blue-500 rounded-lg p-2 shadow-md border-b-4 border-blue-700 mb-2">
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-white font-bold text-sm">🔵 微分方程組</span>
+    <div className="bg-blue-500 rounded-lg p-2 shadow-md border-b-4 border-blue-700 mb-2 space-y-1.5">
+      {/* Header row 1: label + name + trash */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-white font-bold text-sm flex-shrink-0">🔵 微分方程組</span>
         <input
-          className="bg-blue-300 text-blue-900 text-sm px-2 py-0.5 rounded w-32 border border-blue-400"
+          className="bg-blue-300 text-blue-900 text-sm px-2 py-0.5 rounded flex-1 min-w-0 border border-blue-400"
           value={page.name}
           title="此微分方程組的名稱，可自行命名"
           onChange={(e) => updateOdePage(page.id, { name: e.target.value })}
         />
-        <span className="text-blue-100 text-xs" title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢">時間步長 dt:</span>
+        <button onClick={() => removeOdePage(page.id)} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0">
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Header row 2: dt + method */}
+      <div className="flex items-center gap-1.5">
+        <span
+          className="text-blue-100 text-xs flex-shrink-0"
+          title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢"
+        >
+          時間步長 dt:
+        </span>
         <input
-          className="bg-blue-300 text-blue-900 font-mono text-sm px-2 py-0.5 rounded w-16 border border-blue-400"
+          className="bg-blue-300 text-blue-900 font-mono text-sm px-2 py-0.5 rounded w-14 flex-shrink-0 border border-blue-400"
           value={page.increment}
           title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢"
           onChange={(e) => updateOdePage(page.id, { increment: e.target.value })}
         />
         <select
-          className="bg-blue-300 text-blue-900 text-xs px-1 py-0.5 rounded border border-blue-400 ml-auto"
+          className="bg-blue-300 text-blue-900 text-xs px-1 py-0.5 rounded border border-blue-400 flex-1 min-w-0"
           value={page.method}
           title={METHODS.find((m) => m.value === page.method)?.title ?? '選擇數值積分方法'}
           onChange={(e) => updateOdePage(page.id, { method: e.target.value as OdePage['method'] })}
         >
           {METHODS.map((m) => <option key={m.value} value={m.value} title={m.title}>{m.label}</option>)}
         </select>
-        <button onClick={() => removeOdePage(page.id)} className="text-blue-200 hover:text-red-300 transition-colors">
-          <Trash2 className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Rate rows */}
-      <div className="bg-blue-600 rounded p-2 space-y-1">
+      <div className="bg-blue-600 rounded p-2 space-y-2">
         {page.rates.map((rate, i) => (
           <RateRow
             key={i}
