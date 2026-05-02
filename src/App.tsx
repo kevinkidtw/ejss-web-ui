@@ -125,7 +125,7 @@ export default function App() {
 
         {/* Right: stage (top) + sprite list (bottom) — hidden during fullscreen stage */}
         {!stageFullscreen && (
-          <div className="flex flex-col border-l border-gray-700 flex-shrink-0 w-80 min-h-0">
+          <div className="flex flex-col border-l border-gray-700 flex-shrink-0 w-[480px] min-h-0">
             {/* Stage preview — fills upper portion */}
             <div className="flex-1 min-h-0">
               <StagePanel />
