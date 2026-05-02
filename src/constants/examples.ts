@@ -390,21 +390,35 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
   // ─────────────────────────────────────────────
   {
     id: 'crt',
-    description: '模擬陰極射線管（CRT）中的電子束：電場（Ey）使電子做拋物線偏折，磁場（Bz）使其做圓弧偏折，兩者共同作用產生複雜的洛倫茲力軌跡。拉動滑桿即時觀察偏折效果，體驗電視機與示波器的核心原理。',
+    description: '模擬陰極射線管（CRT）中的電子束：洛倫茲力方程式 dvx/dt = -vy·Bz、dvy/dt = vx·Bz - Ey 驅動電子運動。電場（Ey）使電子做拋物線偏折，磁場（Bz）使其做圓弧偏折。拉動滑桿即時觀察偏折效果。',
     difficulty: '進階',
     info: { title: '陰極射線管（電磁偏折）', author: '', keywords: '', abstract: '' },
     variables: [
-      { id: 'crt-Ey',    name: 'Ey',    value: '0',  type: 'double', comment: '電場（Y方向，正值向上偏折電子）', page: 'Variables', scope: 'global' },
-      { id: 'crt-Bz',    name: 'Bz',    value: '0',  type: 'double', comment: '磁場（垂直螢幕，正值指向外側）', page: 'Variables', scope: 'global' },
-      { id: 'crt-v0',    name: 'v0',    value: '5',  type: 'double', comment: '電子初速', page: 'Variables', scope: 'global' },
-      { id: 'crt-phase', name: 'phase', value: '0',  type: 'double', comment: '動畫相位', page: 'Variables', scope: 'global' },
+      { id: 'crt-x',  name: 'x',  value: '-3.8', type: 'double', comment: '電子 X 位置', page: 'Variables', scope: 'global' },
+      { id: 'crt-y',  name: 'y',  value: '0',    type: 'double', comment: '電子 Y 位置', page: 'Variables', scope: 'global' },
+      { id: 'crt-vx', name: 'vx', value: '5',    type: 'double', comment: '電子 X 速度', page: 'Variables', scope: 'global' },
+      { id: 'crt-vy', name: 'vy', value: '0',    type: 'double', comment: '電子 Y 速度', page: 'Variables', scope: 'global' },
+      { id: 'crt-Ey', name: 'Ey', value: '0',    type: 'double', comment: '電場（Y方向，正值向下偏折電子）', page: 'Variables', scope: 'global' },
+      { id: 'crt-Bz', name: 'Bz', value: '0',    type: 'double', comment: '磁場（垂直螢幕，正值指向外側）', page: 'Variables', scope: 'global' },
+      { id: 'crt-v0', name: 'v0', value: '5',    type: 'double', comment: '電子初速（由電子槍加速決定）', page: 'Variables', scope: 'global' },
     ],
     odePages: [{
-      id: 'crt-ode', name: '動畫相位', method: 'Euler', increment: '0.01', comment: '',
-      rates: [{ state: 'phase', expression: '1' }],
+      id: 'crt-ode', name: '電子洛倫茲運動', method: 'RungeKutta', increment: '0.004', comment: '',
+      rates: [
+        { state: 'x',  expression: 'vx' },
+        { state: 'y',  expression: 'vy' },
+        { state: 'vx', expression: '-vy * Bz' },
+        { state: 'vy', expression: 'vx * Bz - Ey' },
+      ],
     }],
-    constraintPages: [],
-    initPages: [],
+    constraintPages: [{
+      id: 'crt-con', name: '邊界重置', comment: '',
+      code: 'if(x >= 4.1 || Math.abs(y) >= 2.8) {\n  x = -3.8; y = 0; vx = v0; vy = 0;\n}',
+    }],
+    initPages: [{
+      id: 'crt-init', name: '設定初速', comment: '',
+      code: 'x = -3.8; y = 0; vx = v0; vy = 0;',
+    }],
     viewElements: [
       {
         id: 'crt-dp', type: 'Elements.DrawingPanel', name: 'DrawingPanel1', parent: '',
@@ -419,74 +433,86 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
         properties: { Variable: 'Bz', Minimum: '-3', Maximum: '3', Step: '0.1', Label: '磁場 Bz' },
       },
       {
+        id: 'crt-sv0', type: 'Elements.Slider', name: '初速滑桿', parent: '',
+        properties: { Variable: 'v0', Minimum: '1', Maximum: '9', Step: '0.5', Label: '初速 v₀' },
+      },
+      {
         id: 'crt-draw', type: 'Elements.CustomDraw', name: 'CRTDraw', parent: 'DrawingPanel1',
         properties: {
-          Code: `var Ey=vars.Ey,Bz=vars.Bz,v0=vars.v0,ph=vars.phase;
-ctx.save();
-ctx.fillStyle="#0a0a1a";ctx.fillRect(0,0,W,H);
-ctx.strokeStyle="#1e293b";ctx.lineWidth=1.5;
-ctx.strokeRect(toPixX(-5),toPixY(2.8),toPixX(5)-toPixX(-5),toPixY(-2.8)-toPixY(2.8));
-var sx=toPixX(4.2);
-ctx.strokeStyle="rgba(34,211,238,0.5)";ctx.lineWidth=4;
-ctx.beginPath();ctx.moveTo(sx,toPixY(2.8));ctx.lineTo(sx,toPixY(-2.8));ctx.stroke();
-ctx.fillStyle="#2d3748";
-ctx.fillRect(toPixX(-5),toPixY(0.45),toPixX(-3.8)-toPixX(-5),toPixY(-0.45)-toPixY(0.45));
-ctx.strokeStyle="#4b5563";ctx.lineWidth=1;
-ctx.strokeRect(toPixX(-5),toPixY(0.45),toPixX(-3.8)-toPixX(-5),toPixY(-0.45)-toPixY(0.45));
-if(Math.abs(Bz)>0.01){
-  ctx.fillStyle="rgba(167,139,250,0.07)";ctx.fillRect(0,toPixY(2.8),W,toPixY(-2.8)-toPixY(2.8));
-  var bsym=Bz>0?"·":"×";
-  ctx.fillStyle="rgba(167,139,250,0.55)";ctx.font="11px monospace";ctx.textAlign="center";
-  for(var xi=-4;xi<=4;xi+=1.8)for(var yi=-2;yi<=2;yi+=1.2)ctx.fillText(bsym,toPixX(xi),toPixY(yi));
-}
-if(Math.abs(Ey)>0.01){
-  ctx.fillStyle=Ey>0?"rgba(239,68,68,0.4)":"rgba(59,130,246,0.4)";
-  ctx.fillRect(toPixX(-3.8),toPixY(2.3),toPixX(3.8)-toPixX(-3.8),toPixY(1.9)-toPixY(2.3));
-  ctx.fillStyle=Ey>0?"rgba(59,130,246,0.4)":"rgba(239,68,68,0.4)";
-  ctx.fillRect(toPixX(-3.8),toPixY(-1.9),toPixX(3.8)-toPixX(-3.8),toPixY(-2.3)-toPixY(-1.9));
-  ctx.strokeStyle=Ey>0?"rgba(239,68,68,0.6)":"rgba(59,130,246,0.6)";ctx.lineWidth=1;
-  for(var xi2=-3;xi2<=3;xi2+=1.5){
-    var xa=toPixX(xi2),ya1=toPixY(1.9),ya2=toPixY(-1.9),dir=Ey>0?-1:1;
-    ctx.beginPath();ctx.moveTo(xa,ya1);ctx.lineTo(xa,ya2);ctx.stroke();
-    var tip=Ey>0?ya2:ya1;
-    ctx.beginPath();ctx.moveTo(xa,tip);ctx.lineTo(xa-4,tip+dir*8);ctx.moveTo(xa,tip);ctx.lineTo(xa+4,tip+dir*8);ctx.stroke();
-  }
-}
-var path=[],px2=-3.8,py2=0,pvx=v0,pvy=0,dts=0.004;
-for(var i=0;i<5000;i++){
-  var ax=-pvy*Bz,ay=-Ey+pvx*Bz;
-  pvx+=ax*dts;pvy+=ay*dts;px2+=pvx*dts;py2+=pvy*dts;
-  path.push([px2,py2]);
-  if(px2>=4.2||Math.abs(py2)>=2.8) break;
-}
-var plen=path.length;
-if(plen>1){
-  ctx.shadowBlur=14;ctx.shadowColor="rgba(250,204,21,0.7)";
-  ctx.strokeStyle="rgba(250,204,21,0.85)";ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(toPixX(-3.8),toPixY(0));
-  for(var k=0;k<plen;k++) ctx.lineTo(toPixX(path[k][0]),toPixY(path[k][1]));
-  ctx.stroke();ctx.shadowBlur=0;
-  var idx=Math.floor((ph*10)%plen);
-  ctx.fillStyle="#fde047";ctx.shadowBlur=20;ctx.shadowColor="#fde047";
-  ctx.beginPath();ctx.arc(toPixX(path[idx][0]),toPixY(path[idx][1]),5,0,2*Math.PI);ctx.fill();
-  ctx.shadowBlur=0;
-  var hp=path[plen-1];
-  if(hp[0]>=4.1){
-    ctx.fillStyle="rgba(34,211,238,0.9)";ctx.shadowBlur=22;ctx.shadowColor="#22d3ee";
-    ctx.beginPath();ctx.arc(sx,toPixY(hp[1]),8,0,2*Math.PI);ctx.fill();
-    ctx.shadowBlur=0;
-    ctx.fillStyle="#e2e8f0";ctx.font="11px monospace";ctx.textAlign="left";
-    ctx.fillText("y="+hp[1].toFixed(2),sx+6,toPixY(hp[1])+4);
-  }
-}
-ctx.shadowBlur=0;ctx.font="12px monospace";ctx.textAlign="left";
-ctx.fillStyle="#e2e8f0";
-ctx.fillText("電場 Ey = "+Ey.toFixed(2),8,18);
-ctx.fillText("磁場 Bz = "+Bz.toFixed(2),8,34);
-ctx.fillStyle="#64748b";ctx.textAlign="center";
-ctx.fillText("電子槍",toPixX(-4.5),toPixY(-2.5));
-ctx.fillText("螢光屏",toPixX(4.5),toPixY(-2.5));
-ctx.restore();`,
+          Code: [
+            'var Ey=vars.Ey,Bz=vars.Bz,v0=vars.v0,ex=vars.x,ey2=vars.y;',
+            'ctx.save();',
+            'ctx.fillStyle="#0a0a1a";ctx.fillRect(0,0,W,H);',
+            // tube outline
+            'ctx.strokeStyle="#1e293b";ctx.lineWidth=1.5;',
+            'ctx.strokeRect(toPixX(-5),toPixY(2.8),toPixX(5)-toPixX(-5),toPixY(-2.8)-toPixY(2.8));',
+            // screen
+            'var sx=toPixX(4.2);',
+            'ctx.strokeStyle="rgba(34,211,238,0.5)";ctx.lineWidth=4;',
+            'ctx.beginPath();ctx.moveTo(sx,toPixY(2.8));ctx.lineTo(sx,toPixY(-2.8));ctx.stroke();',
+            // electron gun
+            'ctx.fillStyle="#2d3748";',
+            'ctx.fillRect(toPixX(-5),toPixY(0.45),toPixX(-3.8)-toPixX(-5),toPixY(-0.45)-toPixY(0.45));',
+            'ctx.strokeStyle="#4b5563";ctx.lineWidth=1;',
+            'ctx.strokeRect(toPixX(-5),toPixY(0.45),toPixX(-3.8)-toPixX(-5),toPixY(-0.45)-toPixY(0.45));',
+            // B field
+            'if(Math.abs(Bz)>0.01){',
+            '  ctx.fillStyle="rgba(167,139,250,0.07)";ctx.fillRect(0,toPixY(2.8),W,toPixY(-2.8)-toPixY(2.8));',
+            '  var bsym=Bz>0?"·":"×";',
+            '  ctx.fillStyle="rgba(167,139,250,0.55)";ctx.font="11px monospace";ctx.textAlign="center";',
+            '  for(var xi=-4;xi<=4;xi+=1.8)for(var yi=-2;yi<=2;yi+=1.2)ctx.fillText(bsym,toPixX(xi),toPixY(yi));',
+            '}',
+            // E field plates + arrows
+            'if(Math.abs(Ey)>0.01){',
+            '  ctx.fillStyle=Ey>0?"rgba(239,68,68,0.4)":"rgba(59,130,246,0.4)";',
+            '  ctx.fillRect(toPixX(-3.8),toPixY(2.3),toPixX(3.8)-toPixX(-3.8),toPixY(1.9)-toPixY(2.3));',
+            '  ctx.fillStyle=Ey>0?"rgba(59,130,246,0.4)":"rgba(239,68,68,0.4)";',
+            '  ctx.fillRect(toPixX(-3.8),toPixY(-1.9),toPixX(3.8)-toPixX(-3.8),toPixY(-2.3)-toPixY(-1.9));',
+            '  ctx.strokeStyle=Ey>0?"rgba(239,68,68,0.6)":"rgba(59,130,246,0.6)";ctx.lineWidth=1;',
+            '  for(var xi2=-3;xi2<=3;xi2+=1.5){',
+            '    var xa=toPixX(xi2),ya1=toPixY(1.9),ya2=toPixY(-1.9),dir=Ey>0?-1:1;',
+            '    ctx.beginPath();ctx.moveTo(xa,ya1);ctx.lineTo(xa,ya2);ctx.stroke();',
+            '    var tip=Ey>0?ya2:ya1;',
+            '    ctx.beginPath();ctx.moveTo(xa,tip);ctx.lineTo(xa-4,tip+dir*8);ctx.moveTo(xa,tip);ctx.lineTo(xa+4,tip+dir*8);ctx.stroke();',
+            '  }',
+            '}',
+            // pre-computed trajectory guide (faint)
+            'var path=[],ppx=-3.8,ppy=0,pvx=v0,pvy=0,dts=0.004;',
+            'for(var i=0;i<5000;i++){',
+            '  var aax=-pvy*Bz,aay=pvx*Bz-Ey;',
+            '  pvx+=aax*dts;pvy+=aay*dts;ppx+=pvx*dts;ppy+=pvy*dts;',
+            '  path.push([ppx,ppy]);',
+            '  if(ppx>=4.2||Math.abs(ppy)>=2.8) break;',
+            '}',
+            'var plen=path.length;',
+            'if(plen>1){',
+            '  ctx.strokeStyle="rgba(250,204,21,0.25)";ctx.lineWidth=1.5;ctx.setLineDash([4,4]);',
+            '  ctx.beginPath();ctx.moveTo(toPixX(-3.8),toPixY(0));',
+            '  for(var k=0;k<plen;k++)ctx.lineTo(toPixX(path[k][0]),toPixY(path[k][1]));',
+            '  ctx.stroke();ctx.setLineDash([]);',
+            '  var hp=path[plen-1];',
+            '  if(hp[0]>=4.1){',
+            '    ctx.fillStyle="rgba(34,211,238,0.7)";ctx.shadowBlur=16;ctx.shadowColor="#22d3ee";',
+            '    ctx.beginPath();ctx.arc(sx,toPixY(hp[1]),7,0,2*Math.PI);ctx.fill();',
+            '    ctx.shadowBlur=0;',
+            '    ctx.fillStyle="#e2e8f0";ctx.font="11px monospace";ctx.textAlign="left";',
+            '    ctx.fillText("y="+hp[1].toFixed(2),sx+8,toPixY(hp[1])+4);',
+            '  }',
+            '}',
+            // live electron from ODE
+            'ctx.fillStyle="#fde047";ctx.shadowBlur=22;ctx.shadowColor="#fde047";',
+            'ctx.beginPath();ctx.arc(toPixX(ex),toPixY(ey2),5,0,2*Math.PI);ctx.fill();',
+            'ctx.shadowBlur=0;',
+            // labels
+            'ctx.font="12px monospace";ctx.textAlign="left";ctx.fillStyle="#e2e8f0";',
+            'ctx.fillText("Ey = "+Ey.toFixed(2),8,18);',
+            'ctx.fillText("Bz = "+Bz.toFixed(2),8,34);',
+            'ctx.fillText("v₀ = "+v0.toFixed(1),8,50);',
+            'ctx.fillStyle="#64748b";ctx.textAlign="center";',
+            'ctx.fillText("電子槍",toPixX(-4.5),toPixY(-2.5));',
+            'ctx.fillText("螢光屏",toPixX(4.6),toPixY(-2.5));',
+            'ctx.restore();',
+          ].join('\n'),
         },
       },
     ],

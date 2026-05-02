@@ -49,8 +49,9 @@ export default function ConstraintBlock({ page, kind }: Props) {
         </button>
       </div>
       <textarea
-        className={`${color.inner} text-white font-mono text-xs px-2 py-1 rounded w-full border border-opacity-30 border-white resize-none`}
+        className={`${color.inner} text-white font-mono text-xs px-2 py-1 rounded w-full border border-opacity-30 border-white resize-none overflow-hidden`}
         rows={4}
+        style={{ fieldSizing: 'content' } as React.CSSProperties}
         value={page.code}
         placeholder={kind === 'constraint' ? '// 例: T = 0.5*m*vx*vx;' : '// 例: x = 1.5; vx = 0.0;'}
         onChange={(e) => update(page.id, { code: e.target.value })}
