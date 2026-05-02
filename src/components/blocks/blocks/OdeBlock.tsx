@@ -20,47 +20,42 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
   const fx = useFxInsert(expression, onExprChange);
 
   return (
-    <div className="space-y-0.5">
-      {/* d[state]/dt = label row */}
-      <div className="flex items-center gap-1">
-        <span className="text-blue-100 text-xs font-mono flex-shrink-0">d[</span>
-        <input
-          className="bg-blue-400 text-white font-mono text-sm px-1.5 py-0.5 rounded w-14 border border-blue-300 flex-shrink-0"
-          value={state}
-          placeholder="x"
-          onChange={(e) => onStateChange(e.target.value)}
+    <div className="flex items-start gap-1">
+      <span className="text-blue-100 text-xs font-mono flex-shrink-0 mt-1">d[</span>
+      <input
+        className="bg-blue-400 text-white font-mono text-sm px-1.5 py-0.5 rounded w-14 flex-shrink-0 border border-blue-300"
+        value={state}
+        placeholder="x"
+        onChange={(e) => onStateChange(e.target.value)}
+      />
+      <span className="text-blue-100 text-xs font-mono flex-shrink-0 mt-1">]/dt&nbsp;=</span>
+      {/* textarea auto-expands when expression is long */}
+      <textarea
+        className="bg-blue-400 text-white font-mono text-xs px-1.5 py-0.5 rounded flex-1 min-w-0 border border-blue-300 resize-none overflow-hidden leading-relaxed"
+        rows={1}
+        style={{ fieldSizing: 'content' } as React.CSSProperties}
+        value={expression}
+        placeholder="vx"
+        onChange={(e) => onExprChange(e.target.value)}
+        {...fx.trackProps}
+      />
+      <button
+        onClick={fx.openPicker}
+        title="插入數學函數"
+        className="text-blue-200 hover:text-white text-xs font-bold px-1 transition-colors flex-shrink-0 mt-0.5"
+      >
+        𝑓𝑥
+      </button>
+      {fx.pickerAnchor && (
+        <MathFunctionPicker
+          anchor={fx.pickerAnchor}
+          onSelect={fx.insert}
+          onClose={fx.closePicker}
         />
-        <span className="text-blue-100 text-xs font-mono flex-shrink-0">]/dt =</span>
-      </div>
-      {/* expression row — textarea auto-expands on long input */}
-      <div className="flex items-start gap-1">
-        <textarea
-          className="bg-blue-400 text-white font-mono text-xs px-1.5 py-0.5 rounded flex-1 min-w-0 border border-blue-300 resize-none overflow-hidden leading-relaxed"
-          rows={1}
-          style={{ fieldSizing: 'content' } as React.CSSProperties}
-          value={expression}
-          placeholder="vx"
-          onChange={(e) => onExprChange(e.target.value)}
-          {...fx.trackProps}
-        />
-        <button
-          onClick={fx.openPicker}
-          title="插入數學函數"
-          className="text-blue-200 hover:text-white text-xs font-bold px-1 transition-colors flex-shrink-0 mt-0.5"
-        >
-          𝑓𝑥
-        </button>
-        {fx.pickerAnchor && (
-          <MathFunctionPicker
-            anchor={fx.pickerAnchor}
-            onSelect={fx.insert}
-            onClose={fx.closePicker}
-          />
-        )}
-        <button onClick={onRemove} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0 mt-0.5">
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
-      </div>
+      )}
+      <button onClick={onRemove} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0 mt-0.5">
+        <Trash2 className="w-3.5 h-3.5" />
+      </button>
     </div>
   );
 }

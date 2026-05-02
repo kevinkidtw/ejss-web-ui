@@ -13,54 +13,49 @@ export default function VariableBlock({ variable }: { variable: SimulationVariab
   const { updateVariable, removeVariable } = useSimulationStore();
 
   return (
-    <div className="bg-yellow-400 rounded-lg p-2 shadow-md border-b-4 border-yellow-600 select-none mb-2 space-y-1.5">
-      {/* Row 1: label + trash */}
-      <div className="flex items-center justify-between">
-        <span className="text-yellow-900 font-bold text-sm">📦 模型變數</span>
-        <button
-          onClick={() => removeVariable(variable.id)}
-          className="text-yellow-800 hover:text-red-600 transition-colors"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Row 2: name + type */}
-      <div className="flex gap-1.5">
+    <div className="bg-yellow-400 rounded-lg px-2 py-1.5 shadow-md border-b-4 border-yellow-600 select-none mb-2">
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className="text-yellow-900 font-bold text-sm flex-shrink-0">📦</span>
+        {/* 名稱 */}
         <input
-          className="bg-yellow-200 text-yellow-900 font-mono text-sm px-2 py-0.5 rounded w-[72px] flex-shrink-0 border border-yellow-500"
+          className="bg-yellow-200 text-yellow-900 font-mono text-sm px-2 py-0.5 rounded w-16 flex-shrink-0 border border-yellow-500"
           value={variable.name}
           placeholder="名稱"
-          title="變數名稱，建議用英文，如 x、vx、mass，在微分方程和元件屬性中都可使用"
+          title="變數名稱，建議用英文，如 x、vx、mass"
           onChange={(e) => updateVariable(variable.id, { name: e.target.value })}
         />
+        {/* 型別 */}
         <select
-          className="bg-yellow-200 text-yellow-900 text-xs px-1 py-0.5 rounded border border-yellow-500 flex-1 min-w-0"
+          className="bg-yellow-200 text-yellow-900 text-xs px-1 py-0.5 rounded border border-yellow-500 w-[118px] flex-shrink-0"
           value={variable.type}
           title={VAR_TYPES.find((t) => t.value === variable.type)?.title ?? '變數型別'}
           onChange={(e) => updateVariable(variable.id, { type: e.target.value as VarType })}
         >
           {VAR_TYPES.map((t) => <option key={t.value} value={t.value} title={t.title}>{t.label}</option>)}
         </select>
-      </div>
-
-      {/* Row 3: = + value + comment */}
-      <div className="flex items-center gap-1.5">
         <span className="text-yellow-900 text-sm flex-shrink-0">=</span>
+        {/* 初始值 */}
         <input
-          className="bg-yellow-200 text-yellow-900 font-mono text-sm px-2 py-0.5 rounded w-[72px] flex-shrink-0 border border-yellow-500"
+          className="bg-yellow-200 text-yellow-900 font-mono text-sm px-2 py-0.5 rounded w-24 flex-shrink-0 border border-yellow-500"
           value={variable.value}
           placeholder="初始值"
           title="模擬開始時此變數的初始值，例如 0、1.5、true"
           onChange={(e) => updateVariable(variable.id, { value: e.target.value })}
         />
+        {/* 說明 */}
         <input
-          className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded flex-1 min-w-0 border border-yellow-400"
+          className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded flex-1 min-w-[60px] border border-yellow-400"
           value={variable.comment}
           placeholder="說明（選填）"
           title="自己寫下這個變數代表什麼，例如「質點的 X 位置（公尺）」"
           onChange={(e) => updateVariable(variable.id, { comment: e.target.value })}
         />
+        <button
+          onClick={() => removeVariable(variable.id)}
+          className="text-yellow-800 hover:text-red-600 transition-colors flex-shrink-0"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

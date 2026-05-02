@@ -10,6 +10,7 @@ export default function ScriptCanvas() {
 
   return (
     <div className="h-full bg-gray-100 overflow-y-auto p-4" style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
+      <div className="max-w-2xl">
       {empty && (
         <div className="flex flex-col items-center justify-center h-full text-gray-400">
           <div className="text-5xl mb-4">🧩</div>
@@ -53,6 +54,7 @@ export default function ScriptCanvas() {
           ))}
         </section>
       )}
+      </div>
     </div>
   );
 }
