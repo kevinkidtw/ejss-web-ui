@@ -187,6 +187,16 @@ const ELEMENT_SCHEMAS: Record<string, ElementMeta> = {
       { name: 'MaximumPoints', label: '最大點數', type: 'number', defaultValue: '1000',  tab: 'visual', description: '軌跡最多保留的記錄點數，超過後舊點會被刪除；建議 500～2000' },
     ],
   },
+  'Elements.CustomDraw': {
+    type: 'Elements.CustomDraw',
+    label: '自訂繪圖',
+    icon: '🎨',
+    defaultWidth: 400,
+    defaultHeight: 400,
+    schema: [
+      { name: 'Code', label: '繪圖程式碼', type: 'code', defaultValue: '', tab: 'behavior', description: '每個畫面都會執行的 JavaScript 繪圖程式碼。可用參數：ctx（畫布）、vars（所有變數）、toPixX/toPixY/toPixLen（座標轉換）、W/H（畫布寬高像素）' },
+    ],
+  },
 };
 
 export default ELEMENT_SCHEMAS;

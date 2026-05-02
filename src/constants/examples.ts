@@ -499,10 +499,6 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
             '    ctx.fillText("y="+hp[1].toFixed(2),sx+8,toPixY(hp[1])+4);',
             '  }',
             '}',
-            // live electron from ODE
-            'ctx.fillStyle="#fde047";ctx.shadowBlur=22;ctx.shadowColor="#fde047";',
-            'ctx.beginPath();ctx.arc(toPixX(ex),toPixY(ey2),5,0,2*Math.PI);ctx.fill();',
-            'ctx.shadowBlur=0;',
             // labels
             'ctx.font="12px monospace";ctx.textAlign="left";ctx.fillStyle="#e2e8f0";',
             'ctx.fillText("Ey = "+Ey.toFixed(2),8,18);',
@@ -514,6 +510,10 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
             'ctx.restore();',
           ].join('\n'),
         },
+      },
+      {
+        id: 'crt-electron', type: 'Elements.Shape2D', name: '電子', parent: 'DrawingPanel1',
+        properties: { X: 'x', Y: 'y', SizeX: '0.18', SizeY: '0.18', ShapeType: 'ELLIPSE', FillColor: '"#fde047"', LineColor: '"#fbbf24"', Visible: 'true' },
       },
     ],
   },

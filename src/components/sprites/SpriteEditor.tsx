@@ -74,8 +74,9 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
           )}
         </div>
         <textarea
-          className="bg-gray-700 text-green-300 font-mono text-xs px-2 py-1 rounded w-full resize-none"
+          className="bg-gray-700 text-green-300 font-mono text-xs px-2 py-1 rounded w-full resize-none overflow-hidden"
           rows={3}
+          style={{ fieldSizing: 'content' } as React.CSSProperties}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           {...fx.trackProps}
