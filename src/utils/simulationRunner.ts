@@ -42,6 +42,12 @@ export function buildSimulationHTML(state: SimulationState): string {
   .var-name  { color: #fbbf24; }
   .var-eq    { color: #64748b; }
   .var-value { color: #4ade80; }
+  .sliders { font-size:11px; font-family:monospace; background:#1e293b; padding:6px 10px;
+             border-radius:6px; width:100%; max-width:500px; display:flex; flex-direction:column; gap:4px; }
+  .slider-row { display:flex; align-items:center; gap:6px; color:#e2e8f0; }
+  .slider-row label { min-width:100px; flex-shrink:0; }
+  .slider-row input[type=range] { flex:1; cursor:pointer; }
+  .slider-val { min-width:42px; text-align:right; color:#4ade80; }
 </style>
 </head>
 <body>
@@ -53,6 +59,7 @@ export function buildSimulationHTML(state: SimulationState): string {
   <button class="reset" onclick="simReset()">↺ 重置</button>
 </div>
 <canvas id="canvas" width="${viewW}" height="${viewH}"></canvas>
+<div class="sliders" id="sliders"></div>
 <div class="vars" id="varDisplay"></div>
 
 <script>
@@ -252,6 +259,10 @@ function render() {
       ctx.beginPath();
       trail.forEach(function(pt,i){ i===0 ? ctx.moveTo(pt[0],pt[1]) : ctx.lineTo(pt[0],pt[1]); });
       ctx.stroke();
+    } else if (el.type === 'Elements.CustomDraw') {
+      try {
+        new Function('ctx','vars','toPixX','toPixY','toPixLen','W','H', p.Code||'')(ctx, vars, toPixX, toPixY, toPixLen, W, H);
+      } catch(e) { console.warn('CustomDraw:', e); }
     }
   });
 
@@ -312,9 +323,37 @@ window.addEventListener('message', function(e){
   if (e.data==='step')  simStep();
 });
 
-// Initial render
-runInit();
-render();
+// Slider init
+(function(){
+  var c=document.getElementById('sliders');
+  if(!c) return;
+  STATE.viewElements.forEach(function(el){
+    if(el.type!=='Elements.Slider') return;
+    var p=el.properties, vn=p.Variable||'';
+    if(!vn) return;
+    var row=document.createElement('div');
+    row.className='slider-row';
+    var lbl=document.createElement('label');
+    lbl.textContent=(p.Label||vn)+':';
+    var inp=document.createElement('input');
+    inp.type='range'; inp.min=p.Minimum||'-10'; inp.max=p.Maximum||'10'; inp.step=p.Step||'0.1';
+    inp.dataset.varname=vn;
+    inp.value=vars[vn]!==undefined?String(vars[vn]):String((parseFloat(p.Minimum||'-10')+parseFloat(p.Maximum||'10'))/2);
+    var val=document.createElement('span');
+    val.className='slider-val';
+    val.textContent=parseFloat(inp.value).toFixed(2);
+    inp.addEventListener('input',function(){
+      vars[vn]=parseFloat(this.value);
+      val.textContent=parseFloat(this.value).toFixed(2);
+      if(!running) render();
+    });
+    row.appendChild(lbl); row.appendChild(inp); row.appendChild(val);
+    c.appendChild(row);
+  });
+  if(!c.children.length) c.style.display='none';
+})();
+
+runInit();render();
 })();
 </script>
 </body>
@@ -355,10 +394,18 @@ export function buildPreviewHTML(state: SimulationState): string {
   .var-name  { color: #fbbf24; }
   .var-eq    { color: #64748b; }
   .var-value { color: #4ade80; }
+  #sliders { position: fixed; bottom: 26px; left: 0; right: 0;
+             font-size: 11px; font-family: monospace; background: rgba(15,23,42,0.9);
+             padding: 4px 10px; display: flex; flex-wrap: wrap; gap: 8px; z-index: 9; }
+  .slider-row { display: flex; align-items: center; gap: 5px; color: #e2e8f0; }
+  .slider-row label { min-width: 90px; flex-shrink: 0; }
+  .slider-row input[type=range] { width: 120px; cursor: pointer; }
+  .slider-val { min-width: 38px; text-align: right; color: #4ade80; }
 </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
+<div id="sliders"></div>
 <div class="vars" id="varDisplay"></div>
 <script>
 (function(){
@@ -493,6 +540,8 @@ function render(){
       if(trail.length<2)return;
       ctx.strokeStyle=(p.LineColor||'"#3b82f6"').replace(/^"|"$/g,'');ctx.lineWidth=1.5;ctx.beginPath();
       trail.forEach(function(pt,i){i===0?ctx.moveTo(pt[0],pt[1]):ctx.lineTo(pt[0],pt[1]);});ctx.stroke();
+    }else if(el.type==='Elements.CustomDraw'){
+      try{new Function('ctx','vars','toPixX','toPixY','toPixLen','W','H',p.Code||'')(ctx,vars,toPixX,toPixY,toPixLen,W(),H());}catch(e){}
     }
   });
   const disp=document.getElementById('varDisplay');
@@ -514,6 +563,35 @@ window.addEventListener('message',function(e){
   if(e.data==='play')simPlay();if(e.data==='pause')simPause();
   if(e.data==='reset')simReset();if(e.data==='step')simStep();
 });
+
+(function(){
+  var c=document.getElementById('sliders');
+  if(!c) return;
+  STATE.viewElements.forEach(function(el){
+    if(el.type!=='Elements.Slider') return;
+    var p=el.properties, vn=p.Variable||'';
+    if(!vn) return;
+    var row=document.createElement('div');
+    row.className='slider-row';
+    var lbl=document.createElement('label');
+    lbl.textContent=(p.Label||vn)+':';
+    var inp=document.createElement('input');
+    inp.type='range'; inp.min=p.Minimum||'-10'; inp.max=p.Maximum||'10'; inp.step=p.Step||'0.1';
+    inp.dataset.varname=vn;
+    inp.value=vars[vn]!==undefined?String(vars[vn]):String((parseFloat(p.Minimum||'-10')+parseFloat(p.Maximum||'10'))/2);
+    var val=document.createElement('span');
+    val.className='slider-val';
+    val.textContent=parseFloat(inp.value).toFixed(2);
+    inp.addEventListener('input',function(){
+      vars[vn]=parseFloat(this.value);
+      val.textContent=parseFloat(this.value).toFixed(2);
+      if(!running) render();
+    });
+    row.appendChild(lbl); row.appendChild(inp); row.appendChild(val);
+    c.appendChild(row);
+  });
+  if(!c.children.length) c.style.display='none';
+})();
 
 runInit();render();
 })();
