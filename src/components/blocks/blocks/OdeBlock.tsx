@@ -11,8 +11,7 @@ const METHODS: { value: OdePage['method']; label: string; title: string }[] = [
   { value: 'Fehlberg78', label: '自適應步長法',        title: '自動調整精度，適合剛性或複雜方程' },
 ];
 
-function RateRow({ pageId, index, state, expression, onStateChange, onExprChange, onRemove }: {
-  pageId: string; index: number;
+function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
   state: string; expression: string;
   onStateChange: (v: string) => void;
   onExprChange: (v: string) => void;
@@ -97,8 +96,6 @@ export default function OdeBlock({ page }: { page: OdePage }) {
         {page.rates.map((rate, i) => (
           <RateRow
             key={i}
-            pageId={page.id}
-            index={i}
             state={rate.state}
             expression={rate.expression}
             onStateChange={(v) => updateOdeRate(page.id, i, { state: v })}
