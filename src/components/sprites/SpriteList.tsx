@@ -116,6 +116,7 @@ export default function SpriteList() {
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
   const topLevel = viewElements.filter((e) => !e.parent || !viewElements.find((p) => p.name === e.parent));
+  const childrenOf = (parentName: string) => viewElements.filter((e) => e.parent === parentName);
 
   const handleContextMenu = (e: React.MouseEvent, elementId: string) => {
     e.preventDefault();
@@ -143,32 +144,64 @@ export default function SpriteList() {
             點擊「新增」加入元件
           </div>
         ) : (
-          <div className="flex flex-wrap gap-2 p-2">
+          <div className="flex flex-col gap-1 p-2">
             {topLevel.map((el) => {
               const meta = ELEMENT_SCHEMAS[el.type];
               const icon = meta?.icon ?? '□';
               const isSelected = el.id === selectedElementId;
+              const children = childrenOf(el.name);
               return (
-                <div
-                  key={el.id}
-                  onClick={() => setSelectedElement(isSelected ? null : el.id)}
-                  onContextMenu={(e) => handleContextMenu(e, el.id)}
-                  className={`relative w-[72px] flex flex-col items-center justify-center rounded-lg border-2 cursor-pointer transition-all p-1
-                    ${isSelected ? 'border-purple-400 bg-purple-900/40' : 'border-gray-600 bg-gray-800 hover:border-gray-400'}`}
-                >
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeViewElement(el.id);
-                      if (isSelected) setSelectedElement(null);
-                    }}
-                    className="absolute top-0.5 right-0.5 text-gray-600 hover:text-red-400 transition-colors"
+                <div key={el.id}>
+                  {/* Parent card */}
+                  <div
+                    onClick={() => setSelectedElement(isSelected ? null : el.id)}
+                    onContextMenu={(e) => handleContextMenu(e, el.id)}
+                    className={`relative flex items-center gap-2 rounded-lg border-2 cursor-pointer transition-all px-2 py-1.5
+                      ${isSelected ? 'border-purple-400 bg-purple-900/40' : 'border-gray-600 bg-gray-800 hover:border-gray-400'}`}
                   >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                  <span className="text-xl mb-0.5">{icon}</span>
-                  <span className="text-[10px] text-gray-300 truncate w-full text-center px-0.5 leading-tight">{el.name}</span>
-                  <span className="text-[9px] text-gray-600 truncate w-full text-center">{el.type.split('.')[1]}</span>
+                    <span className="text-base flex-shrink-0">{icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] text-gray-200 font-medium truncate leading-tight">{el.name}</div>
+                      <div className="text-[9px] text-gray-500 truncate">{el.type.split('.')[1]}</div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeViewElement(el.id); if (isSelected) setSelectedElement(null); }}
+                      className="text-gray-600 hover:text-red-400 transition-colors flex-shrink-0"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                  {/* Child elements */}
+                  {children.length > 0 && (
+                    <div className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-gray-700 pl-2">
+                      {children.map((child) => {
+                        const cmeta = ELEMENT_SCHEMAS[child.type];
+                        const cicon = cmeta?.icon ?? '□';
+                        const cSelected = child.id === selectedElementId;
+                        return (
+                          <div
+                            key={child.id}
+                            onClick={() => setSelectedElement(cSelected ? null : child.id)}
+                            onContextMenu={(e) => handleContextMenu(e, child.id)}
+                            className={`relative flex items-center gap-2 rounded-md border cursor-pointer transition-all px-2 py-1
+                              ${cSelected ? 'border-purple-400 bg-purple-900/40' : 'border-gray-700 bg-gray-800/60 hover:border-gray-500'}`}
+                          >
+                            <span className="text-sm flex-shrink-0">{cicon}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[10px] text-gray-300 truncate leading-tight">{child.name}</div>
+                              <div className="text-[9px] text-gray-600 truncate">{child.type.split('.')[1]}</div>
+                            </div>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); removeViewElement(child.id); if (cSelected) setSelectedElement(null); }}
+                              className="text-gray-600 hover:text-red-400 transition-colors flex-shrink-0"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}
