@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { FolderOpen, Save, Download, RefreshCw, MonitorPlay, BookOpen } from 'lucide-react';
+import { FolderOpen, Save, Download, RefreshCw, MonitorPlay, BookOpen, Calculator } from 'lucide-react';
 import { useSimulationStore } from '../../store/simulationStore';
 import { readEjssFile } from '../../utils/ejssParser';
 import { downloadEjssFile, exportStandaloneHTML } from '../../utils/simulationRunner';
@@ -8,9 +8,10 @@ import ExamplesModal from './ExamplesModal';
 interface Props {
   stageOpen: boolean;
   onToggleStage: () => void;
+  onOpenMath: () => void;
 }
 
-export default function Toolbar({ stageOpen, onToggleStage }: Props) {
+export default function Toolbar({ stageOpen, onToggleStage, onOpenMath }: Props) {
   const store = useSimulationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showExamples, setShowExamples] = useState(false);
@@ -59,6 +60,13 @@ export default function Toolbar({ stageOpen, onToggleStage }: Props) {
         className="flex items-center gap-1 text-yellow-300 hover:text-yellow-100 bg-yellow-800/50 hover:bg-yellow-700/60 px-2 py-1 rounded text-xs transition-colors"
       >
         <BookOpen className="w-3 h-3" /> 範例
+      </button>
+
+      <button
+        onClick={onOpenMath}
+        className="flex items-center gap-1 text-cyan-300 hover:text-cyan-100 bg-cyan-900/50 hover:bg-cyan-800/60 px-2 py-1 rounded text-xs transition-colors"
+      >
+        <Calculator className="w-3 h-3" /> 數學速查
       </button>
 
       <button

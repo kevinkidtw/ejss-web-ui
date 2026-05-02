@@ -6,11 +6,13 @@ import ScriptCanvas from './components/blocks/ScriptCanvas';
 import StagePanel from './components/stage/StagePanel';
 import SpriteList from './components/sprites/SpriteList';
 import SpriteEditor from './components/sprites/SpriteEditor';
+import MathReference from './components/math/MathReference';
 import { useSimulationStore } from './store/simulationStore';
 import ELEMENT_SCHEMAS from './constants/elementSchemas';
 
 const SCRIPT_TAB = '__script__';
 const STAGE_TAB  = '__stage__';
+const MATH_TAB   = '__math__';
 
 interface TabInfo { id: string; label: string; icon: string; }
 
@@ -20,6 +22,11 @@ export default function App() {
   const [activeTabId, setActiveTabId] = useState<string>(SCRIPT_TAB);
 
   const stageFullscreen = activeTabId === STAGE_TAB;
+
+  const handleOpenMath = () => {
+    setOpenTabIds((prev) => prev.includes(MATH_TAB) ? prev : [...prev, MATH_TAB]);
+    setActiveTabId(MATH_TAB);
+  };
 
   const handleToggleStage = () => {
     if (stageFullscreen) {
@@ -62,6 +69,7 @@ export default function App() {
   const buildTabInfo = (id: string): TabInfo => {
     if (id === SCRIPT_TAB) return { id, label: '廣域腳本', icon: '📜' };
     if (id === STAGE_TAB)  return { id, label: '模擬舞台', icon: '🎮' };
+    if (id === MATH_TAB)   return { id, label: '數學速查', icon: '𝑓𝑥' };
     const el = viewElements.find((e) => e.id === id);
     if (!el) return { id, label: id, icon: '□' };
     const meta = ELEMENT_SCHEMAS[el.type];
@@ -70,14 +78,14 @@ export default function App() {
 
   const closeTab = (tabId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (tabId === SCRIPT_TAB) return;
+    if (tabId === SCRIPT_TAB || tabId === STAGE_TAB) return;
     setOpenTabIds((prev) => prev.filter((id) => id !== tabId));
     if (activeTabId === tabId) setActiveTabId(SCRIPT_TAB);
   };
 
   return (
     <div className="h-screen flex flex-col bg-gray-900 overflow-hidden">
-      <Toolbar stageOpen={stageFullscreen} onToggleStage={handleToggleStage} />
+      <Toolbar stageOpen={stageFullscreen} onToggleStage={handleToggleStage} onOpenMath={handleOpenMath} />
 
       <div className="flex flex-1 overflow-hidden min-h-0">
         {/* Left: block palette (top) + element list / backdrop tabs (bottom) */}
@@ -124,6 +132,8 @@ export default function App() {
           <div className="flex-1 min-h-0 overflow-hidden">
             {activeTabId === STAGE_TAB ? (
               <StagePanel />
+            ) : activeTabId === MATH_TAB ? (
+              <MathReference />
             ) : activeTabId === SCRIPT_TAB ? (
               <ScriptCanvas />
             ) : (
