@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
-import { FolderOpen, Save, Download, RefreshCw, MonitorPlay, BookOpen, Calculator } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
+import { FolderOpen, Save, Download, RefreshCw, MonitorPlay, BookOpen, Calculator, LayoutTemplate } from 'lucide-react';
 import { useSimulationStore } from '../../store/simulationStore';
 import { readEjssFile } from '../../utils/ejssParser';
 import { downloadEjssFile, exportStandaloneHTML } from '../../utils/simulationRunner';
+import { BACKDROP_TEMPLATES } from '../../constants/backdropTemplates';
 import ExamplesModal from './ExamplesModal';
 
 interface Props {
@@ -11,10 +12,69 @@ interface Props {
   onOpenMath: () => void;
 }
 
+function BackdropPopover({ onClose }: { onClose: () => void }) {
+  const { info, variables, odePages, constraintPages, initPages, addViewElement } = useSimulationStore();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [onClose]);
+
+  const handleSelect = (templateId: string) => {
+    const template = BACKDROP_TEMPLATES.find((t) => t.id === templateId);
+    if (!template) return;
+    useSimulationStore.setState({
+      info, variables, odePages, constraintPages, initPages,
+      viewElements: [],
+      activeBackdrop: templateId,
+      selectedElementId: null,
+    });
+    template.elements.forEach((el) => addViewElement(el));
+    onClose();
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="fixed z-50 top-11 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl p-3"
+      style={{ left: 'auto' }}
+    >
+      <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2">選擇版型模板</div>
+      <div className="flex flex-wrap gap-2 max-w-[380px]">
+        {BACKDROP_TEMPLATES.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => handleSelect(t.id)}
+            title={t.description}
+            className="flex flex-col items-center rounded-lg border-2 border-gray-600 hover:border-purple-400 overflow-hidden transition-all w-[80px] bg-gray-900 hover:bg-gray-750"
+          >
+            <div className="w-full h-14 flex items-center justify-center overflow-hidden bg-gray-950">
+              <img
+                src={t.preview}
+                alt={t.label}
+                className="max-h-12 max-w-full object-contain"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+            </div>
+            <span className="text-[9px] text-gray-400 px-1 py-1 text-center leading-tight w-full truncate">
+              {t.label}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Toolbar({ stageOpen, onToggleStage, onOpenMath }: Props) {
   const store = useSimulationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showExamples, setShowExamples] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const getState = () => ({
     info: store.info,
@@ -54,6 +114,16 @@ export default function Toolbar({ stageOpen, onToggleStage, onOpenMath }: Props)
       >
         <RefreshCw className="w-3 h-3" /> 新增
       </button>
+
+      <div className="relative">
+        <button
+          onClick={() => setShowTemplates((v) => !v)}
+          className="flex items-center gap-1 text-green-300 hover:text-green-100 bg-green-900/50 hover:bg-green-800/60 px-2 py-1 rounded text-xs transition-colors"
+        >
+          <LayoutTemplate className="w-3 h-3" /> 模板
+        </button>
+        {showTemplates && <BackdropPopover onClose={() => setShowTemplates(false)} />}
+      </div>
 
       <button
         onClick={() => setShowExamples(true)}

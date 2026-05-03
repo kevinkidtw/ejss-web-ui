@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useSimulationStore } from '../../store/simulationStore';
 import ELEMENT_SCHEMAS from '../../constants/elementSchemas';
-import { BACKDROP_TEMPLATES } from '../../constants/backdropTemplates';
 import AddElementModal from './AddElementModal';
 
 interface ContextMenuState {
@@ -65,54 +64,9 @@ function ContextMenu({ menu, onClose }: { menu: ContextMenuState; onClose: () =>
   );
 }
 
-function BackdropPanel() {
-  const { activeBackdrop, setActiveBackdrop, addViewElement, info, variables, odePages, constraintPages, initPages } = useSimulationStore();
-
-  const handleSelect = (templateId: string) => {
-    if (activeBackdrop === templateId) return;
-    const template = BACKDROP_TEMPLATES.find((t) => t.id === templateId);
-    if (!template) return;
-    useSimulationStore.setState({
-      info, variables, odePages, constraintPages, initPages,
-      viewElements: [],
-      activeBackdrop: templateId,
-      selectedElementId: null,
-    });
-    template.elements.forEach((el) => addViewElement(el));
-    setActiveBackdrop(templateId);
-  };
-
-  return (
-    <div className="flex flex-wrap gap-2 p-2">
-      {BACKDROP_TEMPLATES.map((t) => (
-        <button
-          key={t.id}
-          onClick={() => handleSelect(t.id)}
-          title={t.description}
-          className={`flex flex-col items-center rounded-lg border-2 overflow-hidden transition-all w-[72px]
-            ${activeBackdrop === t.id ? 'border-purple-400 ring-1 ring-purple-300' : 'border-gray-600 hover:border-gray-400'}`}
-        >
-          <div className="bg-gray-900 w-full h-12 flex items-center justify-center overflow-hidden">
-            <img
-              src={t.preview}
-              alt={t.label}
-              className="max-h-10 max-w-full object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-          </div>
-          <span className="text-[9px] text-gray-400 px-0.5 py-0.5 text-center leading-tight w-full bg-gray-800 truncate">
-            {t.label}
-          </span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export default function SpriteList() {
   const { viewElements, selectedElementId, setSelectedElement, removeViewElement } = useSimulationStore();
   const [showModal, setShowModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'elements' | 'backdrop'>('elements');
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
   const topLevel = viewElements.filter((e) => !e.parent || !viewElements.find((p) => p.name === e.parent));
@@ -126,35 +80,17 @@ export default function SpriteList() {
 
   return (
     <div className="bg-gray-900 flex flex-col overflow-hidden h-full">
-      {/* Tab bar */}
-      <div className="flex items-center bg-gray-950 border-b border-gray-700 flex-shrink-0 px-1 gap-0.5 pt-1">
-        {(['elements', 'backdrop'] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 pb-1.5 pt-1 text-[11px] font-medium rounded-t transition-colors border-b-2
-              ${activeTab === tab
-                ? 'border-purple-400 text-white'
-                : 'border-transparent text-gray-500 hover:text-gray-300'}`}
-          >
-            {tab === 'elements' ? '元件列表' : '背景模板'}
-          </button>
-        ))}
-        {activeTab === 'elements' && (
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-0.5 bg-purple-600 hover:bg-purple-500 text-white rounded px-1.5 py-0.5 text-[10px] font-bold transition-colors mb-1 flex-shrink-0"
-          >
-            <Plus className="w-3 h-3" /> 新增
-          </button>
-        )}
+      {/* Header */}
+      <div className="flex items-center bg-gray-950 border-b border-gray-700 flex-shrink-0 px-2 py-1 gap-1">
+        <span className="flex-1 text-[11px] font-medium text-gray-400">元件列表</span>
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-0.5 bg-purple-600 hover:bg-purple-500 text-white rounded px-1.5 py-0.5 text-[10px] font-bold transition-colors flex-shrink-0"
+        >
+          <Plus className="w-3 h-3" /> 新增
+        </button>
       </div>
 
-      {activeTab === 'backdrop' ? (
-        <div className="flex-1 overflow-y-auto min-h-0">
-          <BackdropPanel />
-        </div>
-      ) : (
       <div className="flex-1 overflow-y-auto min-h-0">
         {topLevel.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-1.5 py-6 text-center px-3">
@@ -170,7 +106,6 @@ export default function SpriteList() {
               const children = childrenOf(el.name);
               return (
                 <div key={el.id}>
-                  {/* Parent card */}
                   <div
                     onClick={() => setSelectedElement(isSelected ? null : el.id)}
                     onContextMenu={(e) => handleContextMenu(e, el.id)}
@@ -189,7 +124,6 @@ export default function SpriteList() {
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
-                  {/* Child elements */}
                   {children.length > 0 && (
                     <div className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-gray-700 pl-2">
                       {children.map((child) => {
@@ -226,7 +160,6 @@ export default function SpriteList() {
           </div>
         )}
       </div>
-      )}
 
       {showModal && <AddElementModal onClose={() => setShowModal(false)} />}
       {contextMenu && <ContextMenu menu={contextMenu} onClose={() => setContextMenu(null)} />}

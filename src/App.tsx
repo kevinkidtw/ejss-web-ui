@@ -90,7 +90,7 @@ export default function App() {
       <div className="flex flex-1 overflow-hidden min-h-0">
         {/* Left: block palette (top) + element list / backdrop tabs (bottom) */}
         {!stageFullscreen && (
-          <div className="w-52 flex flex-col flex-shrink-0 border-r border-gray-700 overflow-hidden min-h-0">
+          <div className="w-[15%] min-w-[176px] max-w-[260px] flex flex-col flex-shrink-0 border-r border-gray-700 overflow-hidden min-h-0">
             <div className="flex-shrink-0 overflow-y-auto max-h-[56%]">
               <BlockPalette />
             </div>

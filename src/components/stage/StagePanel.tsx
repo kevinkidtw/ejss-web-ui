@@ -53,8 +53,12 @@ export default function StagePanel() {
   const hasContent = store.variables.length > 0 || store.odePages.length > 0 || store.viewElements.length > 0;
   const globalVars = store.variables.filter((v) => v.scope === 'global');
 
+  const dpEl = store.viewElements.find((e) => e.type === 'Elements.DrawingPanel');
+  const dpW = parseInt(dpEl?.properties?.Width ?? '400') || 400;
+  const dpH = parseInt(dpEl?.properties?.Height ?? '400') || 400;
+
   return (
-    <div className="flex flex-col h-full bg-gray-950">
+    <div className="flex flex-col h-full bg-gray-950 overflow-y-auto">
       {/* Controls */}
       <div className="flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-700 flex-shrink-0">
         <span className="text-xs font-bold text-gray-300 mr-1">{store.info.title || '模擬'}</span>
@@ -78,8 +82,8 @@ export default function StagePanel() {
         </div>
       </div>
 
-      {/* Iframe — fills remaining space */}
-      <div className="flex-1 relative bg-white min-h-0">
+      {/* Iframe — fixed aspect ratio based on DrawingPanel dimensions */}
+      <div className="w-full flex-shrink-0 relative bg-gray-900" style={{ aspectRatio: `${dpW} / ${dpH}` }}>
         {!loaded && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 text-gray-500 z-10 select-none">
             <div className="text-5xl mb-3">▶</div>
@@ -88,7 +92,7 @@ export default function StagePanel() {
         )}
         <iframe
           ref={iframeRef}
-          className="w-full h-full border-none"
+          className="absolute inset-0 w-full h-full border-none"
           sandbox="allow-scripts"
           title="simulation-preview"
         />

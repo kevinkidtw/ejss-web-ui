@@ -681,7 +681,7 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
             'var L=3.5,r=0.07;',
             'var px=vars._px,py=vars._py,vx=vars._vx,vy=vars._vy;',
             'ctx.strokeStyle="#475569";ctx.lineWidth=2;',
-            'var bx0=toPixX(-L),by0=toPixY(L),bw=toPixLen(2*L),bh=toPixLen(2*L);',
+            'var bx0=toPixX(-L),by0=toPixY(L),bw=toPixX(L)-toPixX(-L),bh=toPixY(-L)-toPixY(L);',
             'ctx.strokeRect(bx0,by0,bw,bh);',
             'if(px&&px.length>=N){',
             '  var pr=Math.max(2,toPixLen(r));',
