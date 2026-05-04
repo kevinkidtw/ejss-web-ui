@@ -434,8 +434,8 @@ export function buildPreviewHTML(state: SimulationState): string {
 <meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f8fafc;overflow:hidden;}
-#sim-root{position:relative;width:${bbW}px;height:${bbH}px;transform-origin:top left;}
+html,body{width:100%;height:100%;overflow:hidden;background:#f8fafc;}
+#sim-root{position:absolute;top:0;left:0;width:${bbW}px;height:${bbH}px;transform-origin:top left;}
 .sim-btn{cursor:pointer;font-size:12px;font-weight:bold;border:none;border-radius:4px;background:#6366f1;color:white;padding:0 8px;}
 .sim-btn:hover{background:#4f46e5;}
 .sim-label{font-size:13px;font-family:sans-serif;display:flex;align-items:center;}
@@ -555,7 +555,7 @@ STATE.viewElements.forEach(function(el){if(el.type==='Elements.Trail2D')trails[e
 function getDrawPanel(parentId){
   if(!DRAW_PANELS.length)return null;
   if(!parentId)return DRAW_PANELS[0];
-  return DRAW_PANELS.filter(function(p){return p.id===parentId;})[0]||DRAW_PANELS[0];
+  return DRAW_PANELS.filter(function(p){return p.id===parentId||p.el.name===parentId;})[0]||DRAW_PANELS[0];
 }
 
 function drawAxes(panel){
