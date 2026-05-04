@@ -369,8 +369,8 @@ const LAYOUT_EL_TYPES = new Set([
 export function computeSimBBox(viewElements: SimulationState['viewElements']): { w: number; h: number } {
   const layoutEls = viewElements.filter((e) => LAYOUT_EL_TYPES.has(e.type));
   if (!layoutEls.length) return { w: 400, h: 400 };
-  const w = Math.max(...layoutEls.map((e) => (e.x ?? 0) + (e.width ?? parseInt(e.properties.Width ?? '100') || 100)));
-  const h = Math.max(...layoutEls.map((e) => (e.y ?? 0) + (e.height ?? parseInt(e.properties.Height ?? '100') || 100)));
+  const w = Math.max(...layoutEls.map((e) => (e.x ?? 0) + (e.width ?? (parseInt(e.properties.Width ?? '100') || 100))));
+  const h = Math.max(...layoutEls.map((e) => (e.y ?? 0) + (e.height ?? (parseInt(e.properties.Height ?? '100') || 100))));
   return { w: Math.max(w, 200), h: Math.max(h, 100) };
 }
 
@@ -384,8 +384,8 @@ export function buildPreviewHTML(state: SimulationState): string {
   const elementsHTML = state.viewElements.map((el) => {
     const x = el.x ?? 0;
     const y = el.y ?? 0;
-    const w = el.width  ?? parseInt(el.properties.Width  ?? '100') || 100;
-    const h = el.height ?? parseInt(el.properties.Height ?? '100') || 100;
+    const w = el.width  ?? (parseInt(el.properties.Width  ?? '100') || 100);
+    const h = el.height ?? (parseInt(el.properties.Height ?? '100') || 100);
     const pos = `left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
     const p = el.properties;
 
