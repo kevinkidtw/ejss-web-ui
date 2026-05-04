@@ -394,18 +394,10 @@ export function buildPreviewHTML(state: SimulationState): string {
   .var-name  { color: #fbbf24; }
   .var-eq    { color: #64748b; }
   .var-value { color: #4ade80; }
-  #sliders { position: fixed; bottom: 26px; left: 0; right: 0;
-             font-size: 11px; font-family: monospace; background: rgba(15,23,42,0.9);
-             padding: 4px 10px; display: flex; flex-wrap: wrap; gap: 8px; z-index: 9; }
-  .slider-row { display: flex; align-items: center; gap: 5px; color: #e2e8f0; }
-  .slider-row label { min-width: 90px; flex-shrink: 0; }
-  .slider-row input[type=range] { width: 120px; cursor: pointer; }
-  .slider-val { min-width: 38px; text-align: right; color: #4ade80; }
 </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<div id="sliders"></div>
 <div class="vars" id="varDisplay"></div>
 <script>
 (function(){
@@ -549,6 +541,7 @@ function render(){
     const val=vars[v.name],fmt=typeof val==='number'?val.toFixed(3):String(val);
     return '<span style="display:inline-flex;gap:3px"><span class="var-name">'+v.name+'</span><span class="var-eq">=</span><span class="var-value">'+fmt+'</span></span>';
   }).join('');}
+  try{if(window.parent!==window){var _fv={};STATE.variables.forEach(function(v){if(typeof vars[v.name]==='number')_fv[v.name]=vars[v.name];});window.parent.postMessage({type:'frameVars',t:vars.t||0,vars:_fv},'*');}}catch(e){}
 }
 
 let running=false,rafId=null,lastTs=null;
@@ -562,36 +555,8 @@ function simReset(){simPause();Object.assign(vars,origVars);vars.t=0;Object.keys
 window.addEventListener('message',function(e){
   if(e.data==='play')simPlay();if(e.data==='pause')simPause();
   if(e.data==='reset')simReset();if(e.data==='step')simStep();
+  if(e.data&&typeof e.data==='object'&&e.data.type==='setVar'){vars[e.data.name]=e.data.value;if(!running)render();}
 });
-
-(function(){
-  var c=document.getElementById('sliders');
-  if(!c) return;
-  STATE.viewElements.forEach(function(el){
-    if(el.type!=='Elements.Slider') return;
-    var p=el.properties, vn=p.Variable||'';
-    if(!vn) return;
-    var row=document.createElement('div');
-    row.className='slider-row';
-    var lbl=document.createElement('label');
-    lbl.textContent=(p.Label||vn)+':';
-    var inp=document.createElement('input');
-    inp.type='range'; inp.min=p.Minimum||'-10'; inp.max=p.Maximum||'10'; inp.step=p.Step||'0.1';
-    inp.dataset.varname=vn;
-    inp.value=vars[vn]!==undefined?String(vars[vn]):String((parseFloat(p.Minimum||'-10')+parseFloat(p.Maximum||'10'))/2);
-    var val=document.createElement('span');
-    val.className='slider-val';
-    val.textContent=parseFloat(inp.value).toFixed(2);
-    inp.addEventListener('input',function(){
-      vars[vn]=parseFloat(this.value);
-      val.textContent=parseFloat(this.value).toFixed(2);
-      if(!running) render();
-    });
-    row.appendChild(lbl); row.appendChild(inp); row.appendChild(val);
-    c.appendChild(row);
-  });
-  if(!c.children.length) c.style.display='none';
-})();
 
 runInit();render();
 })();

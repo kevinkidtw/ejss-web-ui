@@ -58,10 +58,11 @@ const ELEMENT_SCHEMAS: Record<string, ElementMeta> = {
     defaultWidth: 200,
     defaultHeight: 40,
     schema: [
-      { name: 'Minimum', label: '最小值', type: 'text', defaultValue: '0',  tab: 'init',   description: '滑桿最左端對應的數值' },
-      { name: 'Maximum', label: '最大值', type: 'text', defaultValue: '10', tab: 'init',   description: '滑桿最右端對應的數值' },
-      { name: 'Value',   label: '初始值', type: 'text', defaultValue: '1',  tab: 'init',   description: '模擬開始時滑桿的預設位置，必須介於最小值與最大值之間' },
-      { name: 'Tooltip', label: '提示',   type: 'text', defaultValue: '""', tab: 'visual', description: '滑鼠懸停在滑桿上時顯示的說明文字' },
+      { name: 'Variable', label: '綁定變數', type: 'text', defaultValue: '',    tab: 'init',   description: '此滑桿控制的模型變數名稱，例如填入 k 即可即時調整彈簧係數' },
+      { name: 'Label',    label: '標籤文字', type: 'text', defaultValue: '',    tab: 'visual', description: '顯示在滑桿左側的文字；留空則顯示變數名稱' },
+      { name: 'Minimum',  label: '最小值',  type: 'text', defaultValue: '0',   tab: 'init',   description: '滑桿最左端對應的數值' },
+      { name: 'Maximum',  label: '最大值',  type: 'text', defaultValue: '10',  tab: 'init',   description: '滑桿最右端對應的數值' },
+      { name: 'Step',     label: '步進量',  type: 'text', defaultValue: '0.1', tab: 'init',   description: '每格拖動的最小變化量' },
     ],
   },
   'Elements.Button': {
