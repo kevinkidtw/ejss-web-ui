@@ -33,7 +33,7 @@ export default function HelpTooltip({ text, side = 'top', className = '' }: Prop
       <span className="text-[10px] text-gray-500 hover:text-blue-400 leading-none">ⓘ</span>
       {visible && createPortal(
         <span
-          className="fixed z-[9999] w-56 rounded bg-gray-900 border border-gray-600 px-2.5 py-2 text-[11px] text-gray-200 leading-snug shadow-xl whitespace-normal text-left pointer-events-none"
+          className="fixed z-[9999] w-56 rounded bg-white border border-slate-200 px-2.5 py-2 text-[11px] text-slate-700 leading-snug shadow-xl whitespace-normal text-left pointer-events-none border-l-4 border-l-indigo-500"
           style={
             side === 'right'
               ? { top: pos.top, left: pos.left, transform: 'translateY(-50%)' }

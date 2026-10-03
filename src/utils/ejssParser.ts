@@ -127,13 +127,33 @@ export function parseEjssXML(xmlString: string): SimulationState {
     }
   }
 
+  const absStr = cdata(info?.Abstract) || '';
+  let isLocked = false;
+  let lockPassword = 'admin2026';
+  let cleanDescription = absStr;
+
+  const match = absStr.match(/<!--EJSS_LOCK:(.+?)-->/);
+  if (match) {
+    try {
+      const lockData = JSON.parse(match[1]);
+      isLocked = !!lockData.isLocked;
+      lockPassword = lockData.lockPassword || 'admin2026';
+      cleanDescription = absStr.replace(/<!--EJSS_LOCK:(.+?)-->/, '').trim();
+    } catch (e) {
+      console.warn('Error parsing EJSS_LOCK:', e);
+    }
+  }
+
   return {
     info: {
       title: cdata(info?.Title) || 'Untitled',
       author: cdata(info?.Author),
       keywords: cdata(info?.Keywords),
-      abstract: cdata(info?.Abstract),
+      abstract: cleanDescription,
     },
+    description: cleanDescription,
+    isLocked,
+    lockPassword,
     variables,
     odePages,
     constraintPages,
@@ -143,6 +163,9 @@ export function parseEjssXML(xmlString: string): SimulationState {
 }
 
 export function serializeToEjssXML(state: SimulationState): string {
+  const lockMeta = `\n<!--EJSS_LOCK:${JSON.stringify({ isLocked: state.isLocked || false, lockPassword: state.lockPassword || 'admin2026' })}-->`;
+  const abstractContent = (state.description || '') + (state.isLocked ? lockMeta : '');
+
   const varPages = groupBy(state.variables, (v) => v.page || 'Variables');
 
   const varPagesXml = Object.entries(varPages)
@@ -239,7 +262,7 @@ export function serializeToEjssXML(state: SimulationState): string {
 <Title><![CDATA[${state.info.title}]]></Title>
 <Author><![CDATA[${state.info.author}]]></Author>
 <Keywords><![CDATA[${state.info.keywords}]]></Keywords>
-<Abstract><![CDATA[${state.info.abstract}]]></Abstract>
+<Abstract><![CDATA[${abstractContent}]]></Abstract>
 <UseInterpreter>true</UseInterpreter>
 <RunInBrowserFirst>true</RunInBrowserFirst>
 </Osejs.Information>

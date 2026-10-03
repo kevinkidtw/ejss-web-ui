@@ -1,6 +1,6 @@
 import type { SimulationState } from '../types/simulation';
 
-const EXAMPLES: (SimulationState & { id: string; description: string; difficulty: '入門' | '基礎' | '進階' })[] = [
+const EXAMPLES: (SimulationState & { id: string; description: string; listDescription?: string; difficulty: '入門' | '基礎' | '進階' })[] = [
   // ─────────────────────────────────────────────
   // 1. 簡諧運動
   // ─────────────────────────────────────────────
@@ -229,11 +229,11 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
       },
       {
         id: 'orb-sun', type: 'Elements.Shape2D', name: '太陽', parent: 'DrawingPanel1',
-        properties: { X: '0', Y: '0', SizeX: '0.18', SizeY: '0.18', ShapeType: 'ELLIPSE', FillColor: '"#fbbf24"', LineColor: '"#f59e0b"', Visible: 'true' },
+        properties: { X: '0', Y: '0', SizeX: '0.35', SizeY: '0.35', ShapeType: 'ELLIPSE', FillColor: '"#fbbf24"', LineColor: '"#f59e0b"', Visible: 'true' },
       },
       {
         id: 'orb-planet', type: 'Elements.Shape2D', name: '行星', parent: 'DrawingPanel1',
-        properties: { X: 'x', Y: 'y', SizeX: '0.12', SizeY: '0.12', ShapeType: 'ELLIPSE', FillColor: '"#34d399"', LineColor: '"#059669"', Visible: 'true' },
+        properties: { X: 'x', Y: 'y', SizeX: '0.18', SizeY: '0.18', ShapeType: 'ELLIPSE', FillColor: '"#34d399"', LineColor: '"#059669"', Visible: 'true' },
       },
     ],
   },
@@ -308,15 +308,15 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
       },
       {
         id: 'tb-star1', type: 'Elements.Shape2D', name: '星體1', parent: 'DrawingPanel1',
-        properties: { X: 'x1', Y: 'y1', SizeX: '0.07', SizeY: '0.07', ShapeType: 'ELLIPSE', FillColor: '"#fca5a5"', LineColor: '"#ef4444"', Visible: 'true' },
+        properties: { X: 'x1', Y: 'y1', SizeX: '0.1', SizeY: '0.1', ShapeType: 'ELLIPSE', FillColor: '"#fca5a5"', LineColor: '"#ef4444"', Visible: 'true' },
       },
       {
         id: 'tb-star2', type: 'Elements.Shape2D', name: '星體2', parent: 'DrawingPanel1',
-        properties: { X: 'x2', Y: 'y2', SizeX: '0.07', SizeY: '0.07', ShapeType: 'ELLIPSE', FillColor: '"#86efac"', LineColor: '"#22c55e"', Visible: 'true' },
+        properties: { X: 'x2', Y: 'y2', SizeX: '0.1', SizeY: '0.1', ShapeType: 'ELLIPSE', FillColor: '"#86efac"', LineColor: '"#22c55e"', Visible: 'true' },
       },
       {
         id: 'tb-star3', type: 'Elements.Shape2D', name: '星體3', parent: 'DrawingPanel1',
-        properties: { X: 'x3', Y: 'y3', SizeX: '0.07', SizeY: '0.07', ShapeType: 'ELLIPSE', FillColor: '"#93c5fd"', LineColor: '"#3b82f6"', Visible: 'true' },
+        properties: { X: 'x3', Y: 'y3', SizeX: '0.1', SizeY: '0.1', ShapeType: 'ELLIPSE', FillColor: '"#93c5fd"', LineColor: '"#3b82f6"', Visible: 'true' },
       },
     ],
   },
@@ -522,14 +522,56 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
   // 9. 折射（Snell's Law — 波前動畫）
   // 以平行波前填色動畫展示光進入玻璃後波長縮短、折射角變小
   // ─────────────────────────────────────────────
-  {
+      {
     id: 'snell',
-    description: '以波前動畫展示折射定律：光束從空氣進入玻璃後，波前間距縮短（λ₂ = λ₁/n₂），傳播方向依 Snell 定律偏折。黃色條紋為空氣中波前，青色為玻璃中波前。',
+    listDescription: '以波前動畫展示折射與反射定律：光密射向光疏可展示全反射（TIR）。雙側發射海更斯次波，其包絡線完美疊加出反射與折射波前。',
+    description: `# 💡 折射與反射定律：海更斯原理模擬實驗講義 (Huygens' Principle, Reflection & Refraction)
+
+本實驗以**海更斯原理 (Huygens' Principle)** 爲基礎，展示光波（或任何波動）在通過兩種不同介質邊界時，如何同時產生**反射波 (Reflected Wave)** 與**折射波 (Refracted Wave)**。
+
+### 📘 物理原理與幾何關係
+
+當一束平行光（入射波，黃色）以入射角 $\\theta_1$ 自空氣（介質 1，折射率 $n_1$）入射至玻璃（介質 2，折射率 $n_2$）的交界面時：
+
+1. **海更斯原理次波源**：
+   根據海更斯原理，波前上的每一點都可以看作是發射球面次波（子波，Wavelets）的波源。這些次波在介質中傳播，其在新時刻的公切面（包絡線）即為新的波前。
+   在本模擬中，當入射波前掃過交界面時，界面上均勻分佈的 **15 個橘色圓點**會被依序激發，成為向兩側擴散的半圓形球面次波源。
+
+2. **反射定律 (Law of Reflection)**：
+   * 這些向上膨脹的次波在空氣中疊加，其包絡線形成了向右上方傳播的**反射波前（琥珀色平行條紋）**。
+   * 反射角 $\\theta'_1$ 永遠等於入射角 $\\theta_1$。
+
+3. **折射定律 (Snell's Law)**：
+   * 這些向下膨脹的次波在玻璃中疊加，其包絡線形成了向右下方傳播的**折射波前（青色平行條紋）**。
+   * 折射角 $\\theta_2$ 滿足斯乃爾定律 (Snell's Law)：
+     $$ n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2 $$
+   * 由於 $n_2 > n_1$，在玻璃中的波速 $v_2 < v_1$，波長縮短（$\\lambda_2 = \\lambda_1 \\cdot \\frac{n_1}{n_2}$），使得折射波前間距變窄，且偏向法線（$\\theta_2 < \\theta_1$）。
+
+4. **全反射現象 (Total Internal Reflection, TIR)**：
+   * 當光密介質射入光疏介質（設定 $n_1 > n_2$，例如自玻璃射向空氣）且入射角大於臨界角 $\\theta_c$ 時：
+     $$ \\theta_1 > \\theta_c = \\sin^{-1}\\left(\\frac{n_2}{n_1}\\right) $$
+   * 此時，數學上 $\\sin\\theta_2 > 1$ 無實數解，折射波前與折射次波將**完全消失**，所有能量皆反射回原介質中。
+
+### ✍️ 探究引導與操作任務
+
+1. **觀察次波包絡線**：
+   * 點擊 **▶ 播放**，觀察黃色入射平行波前掃過交界面時，橘色波源點如何被觸發。
+   * 注意觀察每一點產生的**琥珀色半圓次波（向上）**與**青色半圓次波（向下）**。
+   * 驗證這些次波的公切面是否與琥珀色反射波前、青色折射波前完美重合？
+
+2. **調整入射角 $\\theta_1$**：
+   * 拖曳「入射角 $\\theta_1$」的滑桿，觀察反射角與折射角如何隨之改變。
+   * 驗證不論入射角為何，反射波前方向是否永遠對稱？
+
+3. **探究全反射 (TIR)**：
+   * 設定折射率為 $n_1 = 1.5, n_2 = 1.0$（即光密介質入射至光疏介質）。
+   * 慢慢調大入射角 $\\theta_1$。當入射角超過臨界角 $\\theta_c \\approx 41.8^\\circ$ 時，觀察下方介質中的次波與折射波前有何變化？這是全反射現象 (Total Internal Reflection)。
+`,
     difficulty: '基礎',
-    info: { title: '折射定律（波前動畫）', author: '', keywords: '', abstract: '' },
+    info: { title: '折射與反射定律（波前動畫）', author: '', keywords: '', abstract: '' },
     variables: [
       { id: 'sn-t1',  name: 'theta1', value: '0.7854', type: 'double', comment: '入射角（rad），45° = π/4', page: 'Variables', scope: 'global' },
-      { id: 'sn-t2',  name: 'theta2', value: '0',      type: 'double', comment: '折射角（rad），由 Snell 定律計算', page: 'Variables', scope: 'global' },
+      { id: 'sn-t2',  name: 'theta2', value: '0.4824', type: 'double', comment: '折射角（rad），由 Snell 定律計算', page: 'Variables', scope: 'global' },
       { id: 'sn-n1',  name: 'n1',     value: '1.0',    type: 'double', comment: '空氣折射率', page: 'Variables', scope: 'global' },
       { id: 'sn-n2',  name: 'n2',     value: '1.5',    type: 'double', comment: '玻璃折射率（調大可觀察更強折射）', page: 'Variables', scope: 'global' },
       { id: 'sn-ph',  name: 'phase',  value: '0',      type: 'double', comment: '波動相位（動畫驅動）', page: 'Variables', scope: 'global' },
@@ -549,7 +591,19 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
     viewElements: [
       {
         id: 'sn-dp', type: 'Elements.DrawingPanel', name: 'DrawingPanel1', parent: '',
-        properties: { Width: '420', Height: '300', MinimumX: '-4', MaximumX: '4', MinimumY: '-3', MaximumY: '3', Background: '"#0f172a"', SquareAspect: 'false' },
+        properties: { Width: '420', Height: '300', MinimumX: '-4', MaximumX: '4', MinimumY: '-3', MaximumY: '3', Background: '"#030712"', SquareAspect: 'false' },
+      },
+      {
+        id: 'sn-sT1', type: 'Elements.Slider', name: 'Slider_theta1', parent: '',
+        properties: { Variable: 'theta1', Minimum: '0.0', Maximum: '1.57', Step: '0.01', Label: '入射角 θ₁' },
+      },
+      {
+        id: 'sn-sN1', type: 'Elements.Slider', name: 'Slider_n1', parent: '',
+        properties: { Variable: 'n1', Minimum: '1.0', Maximum: '2.5', Step: '0.1', Label: '介質 1 折射率 n₁' },
+      },
+      {
+        id: 'sn-sN2', type: 'Elements.Slider', name: 'Slider_n2', parent: '',
+        properties: { Variable: 'n2', Minimum: '1.0', Maximum: '2.5', Step: '0.1', Label: '介質 2 折射率 n₂' },
       },
       {
         id: 'sn-draw', type: 'Elements.CustomDraw', name: 'WavefrontDraw', parent: 'DrawingPanel1',
@@ -557,45 +611,146 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
           Code: [
             'var t1=vars.theta1,t2=vars.theta2,n1=vars.n1,n2=vars.n2,ph=vars.phase,bHW=vars.beamHW;',
             'var lam1=1.0,lam2=n1/n2,iy=toPixY(0);',
+            'var isTIR=(n1*Math.sin(t1)/n2)>0.9999;',
             'ctx.save();',
-            'ctx.fillStyle="rgba(20,60,120,0.2)";ctx.fillRect(0,0,W,iy);',
-            'ctx.fillStyle="rgba(30,90,160,0.4)";ctx.fillRect(0,iy,W,H-iy);',
-            'ctx.setLineDash([8,4]);ctx.strokeStyle="rgba(200,220,255,0.5)";ctx.lineWidth=1.5;',
+            'ctx.fillStyle="rgba(15, 23, 42, 0.4)";ctx.fillRect(0,0,W,iy);',
+            'ctx.fillStyle="rgba(16, 44, 87, 0.5)";ctx.fillRect(0,iy,W,H-iy);',
+            'ctx.setLineDash([8,4]);ctx.strokeStyle="rgba(255,255,255,0.2)";ctx.lineWidth=1.5;',
             'ctx.beginPath();ctx.moveTo(0,iy);ctx.lineTo(W,iy);ctx.stroke();ctx.setLineDash([]);',
             'ctx.font="12px monospace";ctx.textAlign="left";',
-            'ctx.fillStyle="rgba(180,220,255,0.85)";',
-            'ctx.fillText("空氣  n₁="+n1.toFixed(1),6,18);',
-            'ctx.fillText("玻璃  n₂="+n2.toFixed(1),6,iy+18);',
-            'ctx.fillStyle="rgba(255,230,100,0.85)";ctx.textAlign="right";',
-            'ctx.fillText("θ₁="+(t1*180/Math.PI).toFixed(1)+"°",W-6,18);',
-            'ctx.fillText("θ₂="+(t2*180/Math.PI).toFixed(1)+"°",W-6,iy+18);',
-            'ctx.strokeStyle="rgba(200,200,200,0.25)";ctx.lineWidth=1;ctx.setLineDash([4,3]);',
+            'ctx.fillStyle="rgba(243,244,246,0.8)";',
+            'ctx.fillText("空氣  n₁="+n1.toFixed(1),10,18);',
+            'ctx.fillText("玻璃  n₂="+n2.toFixed(1),10,iy+18);',
+            'ctx.fillStyle="rgba(255,230,100,0.9)";ctx.textAlign="right";',
+            'ctx.fillText("θ₁="+(t1*180/Math.PI).toFixed(1)+"°",W-10,18);',
+            'if(isTIR){',
+            '  ctx.fillStyle="rgba(245,158,11,0.95)";',
+            '  ctx.fillText("全反射 TIR",W-10,iy+18);',
+            '} else {',
+            '  ctx.fillStyle="rgba(34,211,238,0.9)";',
+            '  ctx.fillText("θ₂="+(t2*180/Math.PI).toFixed(1)+"°",W-10,iy+18);',
+            '}',
+            'ctx.strokeStyle="rgba(255,255,255,0.15)";ctx.lineWidth=1;ctx.setLineDash([4,3]);',
             'ctx.beginPath();ctx.moveTo(toPixX(0),0);ctx.lineTo(toPixX(0),H);ctx.stroke();ctx.setLineDash([]);',
             'var s1=Math.sin(t1),c1=Math.cos(t1),s2=Math.sin(t2),c2=Math.cos(t2);',
-            'var airOff=ph%lam1;',
-            'ctx.save();ctx.beginPath();ctx.rect(0,0,W,iy);ctx.clip();',
-            'for(var ai=0;ai<20;ai++){',
-            '  var fa=airOff-ai*lam1,ba=fa-lam1;',
-            '  ctx.fillStyle=ai%2===0?"rgba(255,220,60,0.4)":"rgba(255,180,30,0.6)";',
+            'var xLimit = Math.min(bHW / Math.max(0.01, c1), 4.5);',
+            'var N = 15;',
+            'ctx.save();',
+            'ctx.beginPath();',
+            'ctx.moveTo(toPixX(-xLimit - 3.5 * Math.tan(t1)), toPixY(3.5));',
+            'ctx.lineTo(toPixX(xLimit - 3.5 * Math.tan(t1)), toPixY(3.5));',
+            'ctx.lineTo(toPixX(xLimit), toPixY(0));',
+            'ctx.lineTo(toPixX(-xLimit), toPixY(0));',
+            'ctx.closePath();',
+            'ctx.fillStyle = "rgba(250, 204, 21, 0.08)";',
+            'ctx.fill();',
+            'ctx.beginPath();',
+            'ctx.moveTo(toPixX(-xLimit), toPixY(0));',
+            'ctx.lineTo(toPixX(xLimit), toPixY(0));',
+            'ctx.lineTo(toPixX(xLimit + 3.5 * Math.tan(t1)), toPixY(3.5));',
+            'ctx.lineTo(toPixX(-xLimit + 3.5 * Math.tan(t1)), toPixY(3.5));',
+            'ctx.closePath();',
+            'ctx.fillStyle = isTIR ? "rgba(245, 158, 11, 0.12)" : "rgba(245, 158, 11, 0.05)";',
+            'ctx.fill();',
+            'if(!isTIR){',
             '  ctx.beginPath();',
-            '  ctx.moveTo(toPixX(fa*s1+bHW*c1),toPixY(-fa*c1+bHW*s1));',
-            '  ctx.lineTo(toPixX(fa*s1-bHW*c1),toPixY(-fa*c1-bHW*s1));',
-            '  ctx.lineTo(toPixX(ba*s1-bHW*c1),toPixY(-ba*c1-bHW*s1));',
-            '  ctx.lineTo(toPixX(ba*s1+bHW*c1),toPixY(-ba*c1+bHW*s1));',
-            '  ctx.closePath();ctx.fill();',
+            '  ctx.moveTo(toPixX(-xLimit), toPixY(0));',
+            '  ctx.lineTo(toPixX(xLimit), toPixY(0));',
+            '  ctx.lineTo(toPixX(xLimit + 3.5 * Math.tan(t2)), toPixY(-3.5));',
+            '  ctx.lineTo(toPixX(-xLimit + 3.5 * Math.tan(t2)), toPixY(-3.5));',
+            '  ctx.closePath();',
+            '  ctx.fillStyle = "rgba(34, 211, 238, 0.08)";',
+            '  ctx.fill();',
             '}',
             'ctx.restore();',
-            'var glassBase=(ph*lam2)%lam2,gs=glassBase-lam2;',
-            'ctx.save();ctx.beginPath();ctx.rect(0,iy,W,H-iy);ctx.clip();',
-            'for(var gi=0;gi<25;gi++){',
-            '  var fg=gs+gi*lam2,bg=fg+lam2;',
-            '  ctx.fillStyle=gi%2===0?"rgba(80,200,255,0.4)":"rgba(40,160,230,0.65)";',
+            'var airOff=ph%lam1;',
+            'ctx.save();ctx.beginPath();ctx.rect(0,0,W,iy);ctx.clip();',
+            'ctx.strokeStyle="rgba(250,204,21,0.85)";ctx.lineWidth=2.0;',
+            'ctx.shadowBlur=4;ctx.shadowColor="rgba(250,204,21,0.5)";',
+            'for(var ai=0;ai<20;ai++){',
+            '  var fa=airOff-ai*lam1;',
             '  ctx.beginPath();',
-            '  ctx.moveTo(toPixX(fg*s2+bHW*c2),toPixY(-fg*c2+bHW*s2));',
-            '  ctx.lineTo(toPixX(fg*s2-bHW*c2),toPixY(-fg*c2-bHW*s2));',
-            '  ctx.lineTo(toPixX(bg*s2-bHW*c2),toPixY(-bg*c2-bHW*s2));',
-            '  ctx.lineTo(toPixX(bg*s2+bHW*c2),toPixY(-bg*c2+bHW*s2));',
-            '  ctx.closePath();ctx.fill();',
+            '  ctx.moveTo(toPixX(fa*s1-bHW*c1),toPixY(-fa*c1-bHW*s1));',
+            '  ctx.lineTo(toPixX(fa*s1+bHW*c1),toPixY(-fa*c1+bHW*s1));',
+            '  ctx.stroke();',
+            '}',
+            'ctx.strokeStyle=isTIR?"rgba(245,158,11,0.85)":"rgba(245,158,11,0.45)";',
+            'ctx.shadowColor="rgba(245,158,11,0.5)";',
+            'for(var ri=0;ri<20;ri++){',
+            '  var fr=airOff+ri*lam1;',
+            '  ctx.beginPath();',
+            '  ctx.moveTo(toPixX(fr*s1-bHW*c1),toPixY(fr*c1+bHW*s1));',
+            '  ctx.lineTo(toPixX(fr*s1+bHW*c1),toPixY(fr*c1-bHW*s1));',
+            '  ctx.stroke();',
+            '}',
+            'ctx.restore();',
+            'if(!isTIR){',
+            '  var glassBase=(ph*lam2)%lam2,gs=glassBase-lam2;',
+            '  ctx.save();ctx.beginPath();ctx.rect(0,iy,W,H-iy);ctx.clip();',
+            '  ctx.strokeStyle="rgba(34,211,238,0.85)";ctx.lineWidth=2.0;',
+            '  ctx.shadowBlur=4;ctx.shadowColor="rgba(34,211,238,0.5)";',
+            '  var bHW2 = xLimit * c2;',
+            '  for(var gi=0;gi<25;gi++){',
+            '    var fg=gs+gi*lam2;',
+            '    ctx.beginPath();',
+            '    ctx.moveTo(toPixX(fg*s2-bHW2*c2),toPixY(-fg*c2-bHW2*s2));',
+            '    ctx.lineTo(toPixX(fg*s2+bHW2*c2),toPixY(-fg*c2+bHW2*s2));',
+            '    ctx.stroke();',
+            '  }',
+            '  ctx.restore();',
+            '}',
+            'if(!isTIR){',
+            '  ctx.save();ctx.beginPath();ctx.rect(0,iy,W,H-iy);ctx.clip();',
+            '  for(var i=0; i<N; i++){',
+            '    var xi = -xLimit + (2 * xLimit * i) / (N - 1);',
+            '    var pixXi = toPixX(xi);',
+            '    var phiLocal = ph - xi * s1 / lam1;',
+            '    var f = (phiLocal % 1.0 + 1.0) % 1.0;',
+            '    for(var k=0; k<8; k++){',
+            '      var R = lam2 * (f + k);',
+            '      var pixR = toPixLen(R);',
+            '      var opacity = 0.35 * Math.max(0, 1.0 - R / 4.5);',
+            '      if(opacity <= 0) continue;',
+            '      ctx.strokeStyle = "rgba(34, 211, 238, " + opacity.toFixed(3) + ")";',
+            '      ctx.lineWidth = 1.2;',
+            '      ctx.beginPath();',
+            '      ctx.arc(pixXi, iy, pixR, 0, Math.PI);',
+            '      ctx.stroke();',
+            '    }',
+            '  }',
+            '  ctx.restore();',
+            '}',
+            'ctx.save();ctx.beginPath();ctx.rect(0,0,W,iy);ctx.clip();',
+            'for(var i=0; i<N; i++){',
+            '  var xi = -xLimit + (2 * xLimit * i) / (N - 1);',
+            '  var pixXi = toPixX(xi);',
+            '  var phiLocal = ph - xi * s1 / lam1;',
+            '  var f = (phiLocal % 1.0 + 1.0) % 1.0;',
+            '  for(var k=0; k<8; k++){',
+            '    var R = lam1 * (f + k);',
+            '    var pixR = toPixLen(R);',
+            '    var opacity = (isTIR ? 0.45 : 0.22) * Math.max(0, 1.0 - R / 4.5);',
+            '    if(opacity <= 0) continue;',
+            '    ctx.strokeStyle = "rgba(245, 158, 11, " + opacity.toFixed(3) + ")";',
+            '    ctx.lineWidth = 1.2;',
+            '    ctx.beginPath();',
+            '    ctx.arc(pixXi, iy, pixR, Math.PI, 2 * Math.PI);',
+            '    ctx.stroke();',
+            '  }',
+            '}',
+            'ctx.restore();',
+            'ctx.save();',
+            'for(var i=0; i<N; i++){',
+            '  var xi = -xLimit + (2 * xLimit * i) / (N - 1);',
+            '  var pixXi = toPixX(xi);',
+            '  ctx.fillStyle = "rgba(249,115,22,0.4)";',
+            '  ctx.beginPath();',
+            '  ctx.arc(pixXi, iy, 5, 0, 2*Math.PI);',
+            '  ctx.fill();',
+            '  ctx.fillStyle = "rgba(251,146,60,1.0)";',
+            '  ctx.beginPath();',
+            '  ctx.arc(pixXi, iy, 2.5, 0, 2*Math.PI);',
+            '  ctx.fill();',
             '}',
             'ctx.restore();',
             'ctx.restore();',
@@ -708,6 +863,238 @@ const EXAMPLES: (SimulationState & { id: string; description: string; difficulty
       },
     ],
   },
+
+  // ─────────────────────────────────────────────
+  // 10. 三體問題（3D立體投影）
+  // ─────────────────────────────────────────────
+  {
+      id: 'threebody3d',
+      listDescription: '在三維空間中模擬三個星體互相吸引的運動。包含滑動旋轉視角的 3D 透視投影與深度排序球體渲染。',
+      description: `# 🌌 三體問題 3D 空間運動與透視投影模擬實驗講義
+  # 🌌 三體問題 3D 空間運動與透視投影模擬實驗講義
+      
+  本實驗將經典的三體運動擴展到 **三維物理空間 $(x, y, z)$**，並利用數學投影公式在 2D 畫布上呈現具備立體深度感與相機旋轉互動的 3D 物理動畫。
+  
+  ### 📘 3D 物理原理與運動方程
+  三個星體在三維空間中互相施加萬有引力，每個星體都有三個位置分量 $(x, y, z)$ 與三個速度分量 $(v_x, v_y, v_z)$。其二階常微分方程組在三個維度上是完全對稱且相互耦合的：
+  $ \\frac{d v_{ix}}{dt} = \\sum_{j \\neq i} G m_j \\frac{x_j - x_i}{r_{ij}^3} $
+  $ \\frac{d v_{iy}}{dt} = \\sum_{j \\neq i} G m_j \\frac{y_j - y_i}{r_{ij}^3} $
+  $ \\frac{d v_{iz}}{dt} = \\sum_{j \\neq i} G m_j \\frac{z_j - z_i}{r_{ij}^3} $
+  其中星體之間的距離為三維空間的歐幾里得距離：
+  $ r_{ij} = \\sqrt{(x_j - x_i)^2 + (y_j - y_i)^2 + (z_j - z_i)^2} $
+  
+  ### 🎥 3D 透視投影與旋轉變換 (Camera Projection)
+  為了在二維平面螢幕上繪製三維物件，我們需要定義相機偏航角（Yaw，繞 Y 軸旋轉 $\\theta$）與俯仰角（Pitch，繞 X 軸旋轉 $\\phi$），對三維物理坐標進行旋轉矩陣變換，再進行透視投影：
+  
+  1. **繞 Y 軸旋轉 (Yaw)**：
+     $ x' = x \\cos\\theta - z \\sin\\theta, \\quad z' = x \\sin\\theta + z \\cos\\theta, \\quad y' = y $
+  2. **繞 X 軸旋轉 (Pitch)**：
+     $ x'' = x', \\quad y'' = y' \\cos\\phi - z' \\sin\\phi, \\quad z'' = y' \\sin\\phi + z' \\cos\\phi $
+  3. **透視收縮 (Perspective Projection)**：
+     設相機與原點距離為 $d$（例如 $6.0$），投影後的二維縮放比例因子為 $f = d / (d + z'')$。投影面坐標為：
+     $ x_p = x'' \\cdot f, \\quad y_p = y'' \\cdot f $
+     當 $z''$ 越大（代表星體離相機越遠）時，縮放因子 $f$ 越小，繪製的星體半徑與軌跡也會越小，從而產生「近大遠小」的立體視覺效果。
+  
+  ### 🌟 三維空間（3D）三體穩定解的存在
+  雖然三體問題在大尺度下具有混沌本質，但科學家已證明 **3D 穩定週期解** 是確實存在的！
+  - **廖世俊教授團隊與 2025 年最新發現**：藉由高精度數值模擬（CNS 乾淨數值模擬）與機器學習，科學家在 3D 空間中已經成功尋找到超過 **10,000 個全新的三維週期解軌道**。
+  - **線性穩定性（Linear Stability）**：在這些 3D 週期軌道中，大約有 20%（約 2,000 個）是線性穩定的。這意味著若星體受到微小引力擾動，軌道不會立刻崩潰，星體能自動修正並維持在三維週期路徑附近。
+  - **本範本的 3D 混沌運動**：本 3D 範例所採用的初始參數屬於一個**非共面的三維混沌運動**。這可以作為您觀察「非共面三維運動」的對照組，透過與 2D 的 8 字形穩定解進行對比，學習如何區分三維混沌軌道與穩定的週期軌道。
+  
+  ### ✍️ 探究引導思考
+  1.  **滑鼠拖曳互動**：
+      *   在左側繪圖面板上**按住滑鼠左鍵拖拉**（或在行動裝置上用手指單指滑動），可以即時改變相機的旋轉視角。
+      *   試著旋轉到正上方俯視、或旋轉到側面觀察，這對理解三體運動在三維空間中的分佈有什麼幫助？
+  2.  **3D 空間的混沌性質**：
+      *   本範例配置了非共面的三維空間初始位置與速度（星體 1、2、3 的 Z 軸高度分別為 $0.0$、$0.5$、$-0.5$，且擁有非零的 Z 軸初速度，同時維持系統總動能與質心動量為 0）。
+      *   點擊「播放」運行，觀察三顆星體是如何在 3D 立體線框中進行完全不共面、互相交錯的複雜混沌軌道繞行。
+  `,
+      difficulty: '進階',info: { title: '三體問題（3D立體投影）', author: '', keywords: '', abstract: '' },variables: [
+        {  id: 'tb3-x1',name:'x1',value:'1.0',type:'double',comment:'星體1 X位置',page:'Variables',scope: 'global' },
+        {id:'tb3-y1',name:'y1',value:'0.5',type:'double',comment:'星體1 Y位置',page:'Variables',scope: 'global' },
+        {id:'tb3-z1',name:'z1',value:'0.0',type:'double',comment:'星體1 Z位置',page:'Variables',scope: 'global' },
+        {id:'tb3-vx1',name:'vx1',value:'-0.3',type:'double',comment:'星體1 X速度',page:'Variables',scope: 'global' },
+        {id:'tb3-vy1',name:'vy1',value:'0.4',type:'double',comment:'星體1 Y速度',page:'Variables',scope: 'global' },
+        {id:'tb3-vz1',name:'vz1',value:'0.3',type:'double',comment:'星體1 Z速度',page:'Variables',scope: 'global' },
+        {id:'tb3-x2',name:'x2',value:'-0.8',type:'double',comment:'星體2 X位置',page:'Variables',scope: 'global' },
+        {id:'tb3-y2',name:'y2',value:'-0.4',type:'double',comment:'星體2 Y位置',page:'Variables',scope: 'global' },
+        {id:'tb3-z2',name:'z2',value:'0.5',type:'double',comment:'星體2 Z位置',page:'Variables',scope: 'global' },
+        {id:'tb3-vx2',name:'vx2',value:'0.4',type:'double',comment:'星體2 X速度',page:'Variables',scope: 'global' },
+        {id:'tb3-vy2',name:'vy2',value:'-0.3',type:'double',comment:'星體2 Y速度',page:'Variables',scope: 'global' },
+        {id:'tb3-vz2',name:'vz2',value:'-0.2',type:'double',comment:'星體2 Z速度',page:'Variables',scope: 'global' },
+        {id:'tb3-x3',name:'x3',value:'-0.2',type:'double',comment:'星體3 X位置',page:'Variables',scope: 'global' },
+        {id:'tb3-y3',name:'y3',value:'-0.1',type:'double',comment:'星體3 Y位置',page:'Variables',scope: 'global' },
+        {id:'tb3-z3',name:'z3',value:'-0.5',type:'double',comment:'星體3 Z位置',page:'Variables',scope: 'global' },
+        {id:'tb3-vx3',name:'vx3',value:'-0.1',type:'double',comment:'星體3 X速度',page:'Variables',scope: 'global' },
+        {id:'tb3-vy3',name:'vy3',value:'-0.1',type:'double',comment:'星體3 Y速度',page:'Variables',scope: 'global' },
+        {id:'tb3-vz3',name:'vz3',value:'-0.1',type:'double',comment:'星體3 Z速度',page:'Variables',scope: 'global' },
+        {id:'tb3-m',name:'m',value:'1',type:'double',comment:'星體質量',page:'Variables',scope: 'global' },
+        {id:'tb3-yaw',name:'camYaw',value:'0.5',type:'double',comment:'相機Yaw偏航角(弧度)',page:'Variables',scope: 'global' },
+        {id:'tb3-pit',name:'camPitch',value:'0.4',type:'double',comment:'相機Pitch俯仰角(弧度)',page:'Variables',scope: 'global' }],odePages:[{id:'tb3-ode',name:'3D重力方程',method:'RungeKutta',increment:'0.001',comment:'',rates:[{state:'x1',expression:'vx1'},
+        {state:'y1',expression:'vy1'},
+        {state:'z1',expression:'vz1'},
+        {state:'vx1',expression:'m*(x2-x1)/Math.pow((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)+0.09,1.5) + m*(x3-x1)/Math.pow((x3-x1)*(x3-x1)+(y3-y1)*(y3-y1)+(z3-z1)*(z3-z1)+0.09,1.5)'},
+        {state:'vy1',expression:'m*(y2-y1)/Math.pow((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)+0.09,1.5) + m*(y3-y1)/Math.pow((x3-x1)*(x3-x1)+(y3-y1)*(y3-y1)+(z3-z1)*(z3-z1)+0.09,1.5)'},
+        {state:'vz1',expression:'m*(z2-z1)/Math.pow((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1)+0.09,1.5) + m*(z3-z1)/Math.pow((x3-x1)*(x3-x1)+(y3-y1)*(y3-y1)+(z3-z1)*(z3-z1)+0.09,1.5)'},
+        {state:'x2',expression:'vx2'},
+        {state:'y2',expression:'vy2'},
+        {state:'z2',expression:'vz2'},
+        {state:'vx2',expression:'m*(x1-x2)/Math.pow((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)+(z1-z2)*(z1-z2)+0.09,1.5) + m*(x3-x2)/Math.pow((x3-x2)*(x3-x2)+(y3-y2)*(y3-y2)+(z3-z2)*(z3-z2)+0.09,1.5)'},
+        {state:'vy2',expression:'m*(y1-y2)/Math.pow((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)+(z1-z2)*(z1-z2)+0.09,1.5) + m*(y3-y2)/Math.pow((x3-x2)*(x3-x2)+(y3-y2)*(y3-y2)+(z3-z2)*(z3-z2)+0.09,1.5)'},
+        {state:'vz2',expression:'m*(z1-z2)/Math.pow((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)+(z1-z2)*(z1-z2)+0.09,1.5) + m*(z3-z2)/Math.pow((x3-x2)*(x3-x2)+(y3-y2)*(y3-y2)+(z3-z2)*(z3-z2)+0.09,1.5)'},
+        {state:'x3',expression:'vx3'},
+        {state:'y3',expression:'vy3'},
+        {state:'z3',expression:'vz3'},
+        {state:'vx3',expression:'m*(x1-x3)/Math.pow((x1-x3)*(x1-x3)+(y1-y3)*(y1-y3)+(z1-z3)*(z1-z3)+0.09,1.5) + m*(x2-x3)/Math.pow((x2-x3)*(x2-x3)+(y2-y3)*(y2-y3)+(z2-z3)*(z2-z3)+0.09,1.5)'},
+        {state:'vy3',expression:'m*(y1-y3)/Math.pow((x1-x3)*(x1-x3)+(y1-y3)*(y1-y3)+(z1-z3)*(z1-z3)+0.09,1.5) + m*(y2-y3)/Math.pow((x2-x3)*(x2-x3)+(y2-y3)*(y2-y3)+(z2-z3)*(z2-z3)+0.09,1.5)'},
+        {state:'vz3',expression:'m*(z1-z3)/Math.pow((x1-x3)*(x1-x3)+(y1-y3)*(y1-y3)+(z1-z3)*(z1-z3)+0.09,1.5) + m*(z2-z3)/Math.pow((x2-x3)*(x2-x3)+(y2-y3)*(y2-y3)+(z2-z3)*(z2-z3)+0.09,1.5)'}]}],constraintPages:[],initPages:[],viewElements:[{id:'tb3-dp',type:'Elements.DrawingPanel',name:'DrawingPanel1',parent:'',properties:{Width:'420',Height:'420',MinimumX:'-2',MaximumX:'2',MinimumY:'-2',MaximumY:'2',Background:'"#020617"',SquareAspect:'true'}},
+        {id:'tb3-draw',type:'Elements.CustomDraw',name:'3D畫布渲染器',parent:'DrawingPanel1',properties:{
+      Code: [
+              'var canvas = ctx.canvas;',
+              'if (!canvas._has3DListeners) {',
+              '  canvas._has3DListeners = true;',
+              '  var isDragging = false;',
+              '  var lastX = 0, lastY = 0;',
+              '  ',
+              '  canvas.addEventListener("mousedown", function(e) {',
+              '    if (e.button === 0) {',
+              '      isDragging = true;',
+              '      lastX = e.clientX;',
+              '      lastY = e.clientY;',
+              '    }',
+              '  });',
+              '  ',
+              '  window.addEventListener("mousemove", function(e) {',
+              '    if (isDragging) {',
+              '      var dx = e.clientX - lastX;',
+              '      var dy = e.clientY - lastY;',
+              '      lastX = e.clientX;',
+              '      lastY = e.clientY;',
+              '      vars.camYaw = (vars.camYaw || 0.5) + dx * 0.007;',
+              '      vars.camPitch = Math.max(-Math.PI/2 + 0.05, Math.min(Math.PI/2 - 0.05, (vars.camPitch || 0.4) + dy * 0.007));',
+              '      if (window._simRender) window._simRender();',
+              '    }',
+              '  });',
+              '  ',
+              '  window.addEventListener("mouseup", function() {',
+              '    isDragging = false;',
+              '  });',
+              '  ',
+              '  canvas.addEventListener("touchstart", function(e) {',
+              '    if (e.touches.length === 1) {',
+              '      isDragging = true;',
+              '      lastX = e.touches[0].clientX;',
+              '      lastY = e.touches[0].clientY;',
+              '    }',
+              '  }, { passive: true });',
+              '  ',
+              '  window.addEventListener("touchmove", function(e) {',
+              '    if (isDragging && e.touches.length === 1) {',
+              '      var dx = e.touches[0].clientX - lastX;',
+              '      var dy = e.touches[0].clientY - lastY;',
+              '      lastX = e.touches[0].clientX;',
+              '      lastY = e.touches[0].clientY;',
+              '      vars.camYaw = (vars.camYaw || 0.5) + dx * 0.007;',
+              '      vars.camPitch = Math.max(-Math.PI/2 + 0.05, Math.min(Math.PI/2 - 0.05, (vars.camPitch || 0.4) + dy * 0.007));',
+              '      if (window._simRender) window._simRender();',
+              '    }',
+              '  }, { passive: true });',
+              '  ',
+              '  window.addEventListener("touchend", function() {',
+              '    isDragging = false;',
+              '  });',
+              '}',
+              '',
+              'function project(x, y, z) {',
+              '  var cy = Math.cos(vars.camYaw || 0.5), sy = Math.sin(vars.camYaw || 0.5);',
+              '  var cp = Math.cos(vars.camPitch || 0.4), sp = Math.sin(vars.camPitch || 0.4);',
+              '  var x1 = x * cy - z * sy;',
+              '  var z1 = x * sy + z * cy;',
+              '  var x2 = x1;',
+              '  var y2 = y * cp - z1 * sp;',
+              '  var z2 = y * sp + z1 * cp;',
+              '  var dist = 6.0;',
+              '  var f = dist / (dist + z2);',
+              '  return { x: toPixX(x2 * f), y: toPixY(y2 * f), depth: z2, sizeScale: f };',
+              '}',
+              '',
+              'ctx.fillStyle = "#020617";',
+              'ctx.fillRect(0, 0, W, H);',
+              '',
+              'var vLimit = 1.4;',
+              'var vertices = [',
+              '  [-vLimit, -vLimit, -vLimit], [vLimit, -vLimit, -vLimit], [vLimit, vLimit, -vLimit], [-vLimit, vLimit, -vLimit],',
+              '  [-vLimit, -vLimit, vLimit],  [vLimit, -vLimit, vLimit],  [vLimit, vLimit, vLimit],  [-vLimit, vLimit, vLimit]',
+              '];',
+              'var edges = [',
+              '  [0, 1], [1, 2], [2, 3], [3, 0],',
+              '  [4, 5], [5, 6], [6, 7], [7, 4],',
+              '  [0, 4], [1, 5], [2, 6], [3, 7]',
+              '];',
+              'ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";',
+              'ctx.lineWidth = 1;',
+              'edges.forEach(function(e) {',
+              '  var p1 = project(vertices[e[0]][0], vertices[e[0]][1], vertices[e[0]][2]);',
+              '  var p2 = project(vertices[e[1]][0], vertices[e[1]][1], vertices[e[1]][2]);',
+              '  ctx.beginPath();ctx.moveTo(p1.x, p1.y);ctx.lineTo(p2.x, p2.y);ctx.stroke();',
+              '});',
+              '',
+              'if (!vars._trails) {',
+              '  vars._trails = [[], [], []];',
+              '  vars._t_last = -1;',
+              '}',
+              'if (vars.t !== vars._t_last) {',
+              '  vars._t_last = vars.t;',
+              '  vars._trails[0].push([vars.x1, vars.y1, vars.z1]);',
+              '  vars._trails[1].push([vars.x2, vars.y2, vars.z2]);',
+              '  vars._trails[2].push([vars.x3, vars.y3, vars.z3]);',
+              '  var maxPts = 500;',
+              '  for (var i = 0; i < 3; i++) {',
+              '    if (vars._trails[i].length > maxPts) vars._trails[i].shift();',
+              '  }',
+              '}',
+              '',
+              'var colors = ["rgba(248, 113, 113, ", "rgba(74, 222, 128, ", "rgba(96, 165, 250, "];',
+              'for (var ti = 0; ti < 3; ti++) {',
+              '  var tPoints = vars._trails[ti];',
+              '  if (tPoints.length < 2) continue;',
+              '  ctx.lineWidth = 2.0;',
+              '  for (var k = 1; k < tPoints.length; k++) {',
+              '    var pStart = project(tPoints[k-1][0], tPoints[k-1][1], tPoints[k-1][2]);',
+              '    var pEnd = project(tPoints[k][0], tPoints[k][1], tPoints[k][2]);',
+              '    var alpha = (k / tPoints.length) * 0.65;',
+              '    ctx.strokeStyle = colors[ti] + alpha + ")";',
+              '    ctx.beginPath();ctx.moveTo(pStart.x, pStart.y);ctx.lineTo(pEnd.x, pEnd.y);ctx.stroke();',
+              '  }',
+              '}',
+              '',
+              'var stars = [',
+              '  { x: vars.x1, y: vars.y1, z: vars.z1, color: "#fca5a5", lineColor: "#ef4444" },',
+              '  { x: vars.x2, y: vars.y2, z: vars.z2, color: "#86efac", lineColor: "#22c55e" },',
+              '  { x: vars.x3, y: vars.y3, z: vars.z3, color: "#93c5fd", lineColor: "#3b82f6" }',
+              '];',
+              'stars.forEach(function(s) { s.proj = project(s.x, s.y, s.z); });',
+              'stars.sort(function(a, b) { return b.proj.depth - a.proj.depth; });',
+              'stars.forEach(function(s) {',
+              '  var p = s.proj;',
+              '  var baseRadius = 0.12;',
+              '  var pxR = toPixLen(baseRadius * p.sizeScale);',
+              '  var grad = ctx.createRadialGradient(p.x - pxR * 0.3, p.y - pxR * 0.3, pxR * 0.1, p.x, p.y, pxR);',
+              '  grad.addColorStop(0, "#ffffff");',
+              '  grad.addColorStop(0.3, s.color);',
+              '  grad.addColorStop(1, s.lineColor);',
+              '  ctx.beginPath();ctx.arc(p.x, p.y, Math.max(pxR, 3), 0, 2*Math.PI);',
+              '  ctx.fillStyle = grad;ctx.fill();',
+              '  ctx.strokeStyle = "rgba(255,255,255,0.3)";ctx.lineWidth = 0.5;ctx.stroke();',
+              '});',
+              '',
+              'ctx.fillStyle = "#94a3b8";ctx.font = "12px monospace";ctx.textAlign = "left";',
+              'ctx.fillText("按住滑鼠左鍵拖曳旋轉視角", 12, 22);',
+              'ctx.fillText("Yaw: " + (vars.camYaw || 0.5).toFixed(2) + " rad", 12, 40);',
+              'ctx.fillText("Pitch: " + (vars.camPitch || 0.4).toFixed(2) + " rad", 12, 58);',
+            ].join('\n')
+      }}]
+    },
 ];
 
 export default EXAMPLES;

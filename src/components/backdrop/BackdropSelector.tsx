@@ -30,7 +30,7 @@ export default function BackdropSelector() {
           >
             <div className="bg-white flex items-center justify-center h-32 overflow-hidden">
               <img
-                src={t.preview}
+                src={import.meta.env.BASE_URL.replace(/\/$/, '') + t.preview}
                 alt={t.label}
                 className="max-h-28 max-w-full object-contain"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}

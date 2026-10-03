@@ -7,6 +7,7 @@ import type { ViewElement } from '../../types/simulation';
 import HelpTooltip from '../ui/HelpTooltip';
 import MathFunctionPicker from '../ui/MathFunctionPicker';
 import { useFxInsert } from '../../hooks/useFxInsert';
+import ElementIcon from '../common/ElementIcon';
 
 type EditorTab = 'init' | 'behavior' | 'visual';
 
@@ -19,7 +20,7 @@ const TAB_LABELS: Record<EditorTab, string> = {
 function Label({ schema }: { schema: PropSchema }) {
   return (
     <div className="flex items-center gap-1 mb-0.5">
-      <span className="text-xs text-gray-400">{schema.label}</span>
+      <span className="text-xs text-slate-500">{schema.label}</span>
       {schema.description && <HelpTooltip text={schema.description} />}
     </div>
   );
@@ -32,13 +33,13 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
     return (
       <div className="flex items-center justify-between py-1">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-gray-300">{schema.label}</span>
+          <span className="text-xs text-slate-600">{schema.label}</span>
           {schema.description && <HelpTooltip text={schema.description} />}
         </div>
         <button
           onClick={() => onChange(value === 'true' ? 'false' : 'true')}
-          className={`w-10 h-5 rounded-full transition-colors text-[10px] font-bold
-            ${value === 'true' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-400'}`}
+          className={`w-10 h-5 rounded-full transition-colors text-[10px] font-bold cursor-pointer
+            ${value === 'true' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-500'}`}
         >
           {value === 'true' ? 'ON' : 'OFF'}
         </button>
@@ -50,11 +51,11 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
       <div className="py-1">
         <Label schema={schema} />
         <select
-          className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-full"
+          className="bg-slate-50 text-slate-800 text-xs px-2 py-1 rounded border border-slate-200 w-full outline-none focus:bg-white focus:border-indigo-500"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
-          {schema.options.map((o) => <option key={o} value={o}>{o}</option>)}
+          {schema.options.map((o) => <option key={o} value={o} className="bg-white text-slate-800">{o}</option>)}
         </select>
       </div>
     );
@@ -67,14 +68,14 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
           <button
             onClick={fx.openPicker}
             title="插入數學函數"
-            className="text-[10px] text-gray-500 hover:text-purple-400 font-bold px-1 transition-colors"
+            className="text-[10px] text-slate-400 hover:text-indigo-600 font-bold px-1 transition-colors"
           >𝑓𝑥</button>
           {fx.pickerAnchor && (
             <MathFunctionPicker anchor={fx.pickerAnchor} onSelect={fx.insert} onClose={fx.closePicker} />
           )}
         </div>
         <textarea
-          className="bg-gray-700 text-green-300 font-mono text-xs px-2 py-1 rounded w-full resize-none overflow-hidden"
+          className="bg-slate-50 text-emerald-750 font-mono text-xs px-2 py-1 border border-slate-200 rounded w-full resize-none overflow-hidden outline-none focus:bg-white focus:border-indigo-500"
           rows={3}
           style={{ fieldSizing: 'content' } as React.CSSProperties}
           value={value}
@@ -91,7 +92,7 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
         <Label schema={schema} />
         <div className="flex items-center gap-2">
           <input
-            className="bg-gray-700 text-white text-xs px-1 py-0.5 rounded flex-1 font-mono"
+            className="bg-slate-50 text-slate-800 text-xs px-2 py-1 border border-slate-200 rounded flex-1 font-mono outline-none focus:bg-white focus:border-indigo-500"
             value={value}
             onChange={(e) => onChange(e.target.value)}
           />
@@ -99,7 +100,7 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
             type="color"
             value={raw.startsWith('#') ? raw : '#ffffff'}
             onChange={(e) => onChange(`"${e.target.value}"`)}
-            className="w-6 h-6 rounded cursor-pointer border-0 p-0 flex-shrink-0"
+            className="w-6 h-6 rounded cursor-pointer border border-slate-200 p-0 flex-shrink-0"
           />
         </div>
       </div>
@@ -112,14 +113,14 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
         <button
           onClick={fx.openPicker}
           title="插入數學函數"
-          className="text-[10px] text-gray-500 hover:text-purple-400 font-bold px-1 transition-colors"
+          className="text-[10px] text-slate-400 hover:text-indigo-600 font-bold px-1 transition-colors"
         >𝑓𝑥</button>
         {fx.pickerAnchor && (
           <MathFunctionPicker anchor={fx.pickerAnchor} onSelect={fx.insert} onClose={fx.closePicker} />
         )}
       </div>
       <input
-        className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-full font-mono"
+        className="bg-slate-50 text-slate-800 text-xs px-2 py-1 border border-slate-200 rounded w-full font-mono outline-none focus:bg-white focus:border-indigo-500"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         {...fx.trackProps}
@@ -136,25 +137,25 @@ function ExtraProps({ el }: { el: ViewElement }) {
 
   if (extraEntries.length === 0) return null;
   return (
-    <div className="mt-3 pt-3 border-t border-gray-700">
-      <div className="text-[10px] text-gray-500 uppercase mb-1">其他屬性</div>
+    <div className="mt-3 pt-3 border-t border-slate-200">
+      <div className="text-[10px] text-slate-400 uppercase mb-1 font-semibold">其他屬性</div>
       {extraEntries.map(([k, v]) => (
         <div key={k} className="py-1">
           <div className="flex items-center justify-between mb-0.5">
-            <span className="text-xs text-gray-400 font-mono">{k}</span>
+            <span className="text-xs text-slate-500 font-mono">{k}</span>
             <button
               onClick={() => {
                 const props = { ...el.properties };
                 delete props[k];
                 updateViewElement(el.id, { properties: props });
               }}
-              className="text-gray-600 hover:text-red-400 transition-colors"
+              className="text-slate-400 hover:text-rose-600 hover:bg-slate-50 p-1 rounded transition-colors"
             >
               <Trash2 className="w-3 h-3" />
             </button>
           </div>
           <input
-            className="bg-gray-700 text-white text-xs px-2 py-0.5 rounded w-full font-mono"
+            className="bg-slate-50 text-slate-800 text-xs px-2 py-1 border border-slate-200 rounded w-full font-mono outline-none focus:bg-white focus:border-indigo-500"
             value={v}
             onChange={(e) => updateViewElement(el.id, { properties: { ...el.properties, [k]: e.target.value } })}
           />
@@ -189,31 +190,33 @@ export default function SpriteEditor({ elementId }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-800 overflow-hidden min-h-0">
+    <div className="flex flex-col h-full bg-white overflow-hidden min-h-0">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-700 flex-shrink-0">
-        <span className="text-lg">{meta?.icon ?? '□'}</span>
+      <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-50 border-b border-slate-200 flex-shrink-0">
+        <div className="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+          <ElementIcon type={el.type} className="w-4.5 h-4.5 text-indigo-600" />
+        </div>
         <div className="flex-1 min-w-0">
           <input
-            className="bg-transparent text-white text-sm font-bold w-full truncate focus:outline-none focus:bg-gray-700 rounded px-1"
+            className="bg-transparent text-slate-800 text-sm font-bold w-full truncate focus:outline-none focus:bg-slate-100 rounded px-1"
             value={el.name}
             onChange={(e) => updateViewElement(el.id, { name: e.target.value })}
           />
-          <div className="text-[10px] text-purple-400 font-mono">{el.type}</div>
+          <div className="text-[10px] text-indigo-650 font-mono leading-none mt-0.5">{el.type}</div>
         </div>
-        <button onClick={handleDelete} className="text-gray-500 hover:text-red-400 transition-colors">
+        <button onClick={handleDelete} className="text-slate-400 hover:text-rose-600 p-1 hover:bg-slate-100 rounded transition-colors cursor-pointer">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-700 flex-shrink-0">
+      <div className="flex bg-slate-50 border-b border-slate-200 flex-shrink-0">
         {(Object.keys(TAB_LABELS) as EditorTab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 text-xs py-1.5 transition-colors
-              ${activeTab === tab ? 'bg-gray-700 text-white font-bold border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}
+            className={`flex-1 text-xs py-2 transition-all cursor-pointer border-b-2
+              ${activeTab === tab ? 'bg-white text-slate-900 font-bold border-indigo-600' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 border-transparent'}`}
           >
             {TAB_LABELS[tab]}
           </button>
@@ -221,9 +224,9 @@ export default function SpriteEditor({ elementId }: Props) {
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-y-auto px-3 py-2">
+      <div className="flex-1 overflow-y-auto px-3 py-2 bg-white">
         {schemaForTab.length === 0 && activeTab !== 'visual' && (
-          <p className="text-xs text-gray-600 text-center py-4">此元件在此頁沒有設定項</p>
+          <p className="text-xs text-slate-400 text-center py-6">此元件在此頁沒有設定項</p>
         )}
         {schemaForTab.map((s) => (
           <PropRow

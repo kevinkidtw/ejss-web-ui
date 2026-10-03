@@ -57,6 +57,9 @@ export interface SimulationInfo {
 
 export interface SimulationState {
   info: SimulationInfo;
+  description?: string;
+  isLocked?: boolean;
+  lockPassword?: string;
   variables: SimulationVariable[];
   odePages: OdePage[];
   constraintPages: CodePage[];

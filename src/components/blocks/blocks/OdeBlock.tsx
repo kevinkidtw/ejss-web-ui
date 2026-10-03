@@ -20,18 +20,18 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
   const fx = useFxInsert(expression, onExprChange);
 
   return (
-    <div className="flex items-start gap-1">
-      <span className="text-blue-100 text-xs font-mono flex-shrink-0 mt-1">d[</span>
+    <div className="flex items-start gap-2">
+      <span className="text-slate-400 text-xs font-mono flex-shrink-0 mt-1.5">d[</span>
       <input
-        className="bg-blue-400 text-white font-mono text-sm px-1.5 py-0.5 rounded w-14 flex-shrink-0 border border-blue-300"
+        className="bg-slate-50 text-slate-800 placeholder-slate-450 font-mono text-xs px-2 py-1 rounded w-16 flex-shrink-0 border border-slate-200 outline-none focus:bg-white focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/15 transition-all"
         value={state}
         placeholder="x"
         onChange={(e) => onStateChange(e.target.value)}
       />
-      <span className="text-blue-100 text-xs font-mono flex-shrink-0 mt-1">]/dt&nbsp;=</span>
+      <span className="text-slate-400 text-xs font-mono flex-shrink-0 mt-1.5">]/dt&nbsp;=</span>
       {/* textarea auto-expands when expression is long */}
       <textarea
-        className="bg-blue-400 text-white font-mono text-xs px-1.5 py-0.5 rounded flex-1 min-w-0 border border-blue-300 resize-none overflow-hidden leading-relaxed"
+        className="bg-slate-50 text-slate-800 placeholder-slate-450 font-mono text-xs px-2.5 py-1 rounded flex-1 min-w-0 border border-slate-200 outline-none focus:bg-white focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/15 resize-none overflow-hidden leading-relaxed transition-all"
         rows={1}
         style={{ fieldSizing: 'content' } as React.CSSProperties}
         value={expression}
@@ -42,7 +42,7 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
       <button
         onClick={fx.openPicker}
         title="插入數學函數"
-        className="text-blue-200 hover:text-white text-xs font-bold px-1 transition-colors flex-shrink-0 mt-0.5"
+        className="text-indigo-600 hover:text-indigo-850 text-xs font-bold px-2 py-1 rounded hover:bg-slate-100 transition-colors flex-shrink-0 mt-0.5"
       >
         𝑓𝑥
       </button>
@@ -53,7 +53,11 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
           onClose={fx.closePicker}
         />
       )}
-      <button onClick={onRemove} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0 mt-0.5">
+      <button
+        onClick={onRemove}
+        className="text-slate-450 hover:text-rose-600 hover:bg-slate-100 p-1.5 rounded transition-colors flex-shrink-0 mt-0.5"
+        title="刪除方程"
+      >
         <Trash2 className="w-3.5 h-3.5" />
       </button>
     </div>
@@ -64,47 +68,54 @@ export default function OdeBlock({ page }: { page: OdePage }) {
   const { updateOdePage, addOdeRate, updateOdeRate, removeOdeRate, removeOdePage } = useSimulationStore();
 
   return (
-    <div className="bg-blue-500 rounded-lg p-2 shadow-md border-b-4 border-blue-700 mb-2 space-y-1.5">
+    <div className="bg-white border border-slate-200 border-l-4 border-l-indigo-500 rounded-lg p-3.5 shadow-sm hover:border-slate-300/85 transition-all select-none mb-3 space-y-3">
       {/* Header row 1: label + name + trash */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-white font-bold text-sm flex-shrink-0">🔵 微分方程組</span>
+      <div className="flex items-center gap-2">
+        <span className="text-indigo-600 font-bold text-sm flex-shrink-0 flex items-center gap-1">
+          <span>🔵</span>
+          <span>微分方程組</span>
+        </span>
         <input
-          className="bg-blue-300 text-blue-900 text-sm px-2 py-0.5 rounded flex-1 min-w-0 border border-blue-400"
+          className="bg-slate-50 text-slate-800 placeholder-slate-400 text-xs px-2.5 py-1 rounded flex-1 min-w-0 border border-slate-200 outline-none focus:bg-white focus:border-indigo-500/80 transition-all"
           value={page.name}
           title="此微分方程組的名稱，可自行命名"
           onChange={(e) => updateOdePage(page.id, { name: e.target.value })}
         />
-        <button onClick={() => removeOdePage(page.id)} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0">
+        <button
+          onClick={() => removeOdePage(page.id)}
+          className="text-slate-450 hover:text-rose-650 hover:bg-slate-100 p-1.5 rounded transition-all flex-shrink-0"
+          title="刪除微分方程組"
+        >
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
 
       {/* Header row 2: dt + method */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2.5">
         <span
-          className="text-blue-100 text-xs flex-shrink-0"
+          className="text-slate-500 text-xs flex-shrink-0"
           title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢"
         >
           時間步長 dt:
         </span>
         <input
-          className="bg-blue-300 text-blue-900 font-mono text-sm px-2 py-0.5 rounded w-14 flex-shrink-0 border border-blue-400"
+          className="bg-slate-50 text-slate-800 placeholder-slate-400 font-mono text-xs px-2.5 py-1 rounded w-16 flex-shrink-0 border border-slate-200 outline-none focus:bg-white focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/15 transition-all"
           value={page.increment}
           title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢"
           onChange={(e) => updateOdePage(page.id, { increment: e.target.value })}
         />
         <select
-          className="bg-blue-300 text-blue-900 text-xs px-1 py-0.5 rounded border border-blue-400 flex-1 min-w-0"
+          className="bg-slate-50 text-slate-700 text-xs px-2 py-1 rounded border border-slate-200 flex-1 min-w-0 outline-none focus:bg-white focus:border-indigo-500/80 transition-all"
           value={page.method}
           title={METHODS.find((m) => m.value === page.method)?.title ?? '選擇數值積分方法'}
           onChange={(e) => updateOdePage(page.id, { method: e.target.value as OdePage['method'] })}
         >
-          {METHODS.map((m) => <option key={m.value} value={m.value} title={m.title}>{m.label}</option>)}
+          {METHODS.map((m) => <option key={m.value} value={m.value} className="bg-white text-slate-850" title={m.title}>{m.label}</option>)}
         </select>
       </div>
 
       {/* Rate rows */}
-      <div className="bg-blue-600 rounded p-2 space-y-2">
+      <div className="bg-slate-50/80 border border-slate-200 rounded-lg p-3 space-y-2.5">
         {page.rates.map((rate, i) => (
           <RateRow
             key={i}
@@ -117,9 +128,9 @@ export default function OdeBlock({ page }: { page: OdePage }) {
         ))}
         <button
           onClick={() => addOdeRate(page.id)}
-          className="flex items-center gap-1 text-blue-200 hover:text-white text-xs transition-colors mt-1"
+          className="flex items-center gap-1.5 text-indigo-650 hover:text-indigo-800 text-xs transition-colors mt-1 hover:underline font-semibold cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5" /> 新增方程
+          <Plus className="w-4 h-4" /> 新增方程
         </button>
       </div>
     </div>

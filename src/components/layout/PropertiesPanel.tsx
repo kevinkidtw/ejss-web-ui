@@ -12,7 +12,7 @@ export default function PropertiesPanel({ element, onClose }: Props) {
 
   if (!element) {
     return (
-      <div className="w-56 bg-gray-800 text-gray-400 p-3 flex-shrink-0 flex items-center justify-center text-xs text-center">
+      <div className="w-56 bg-slate-100 text-slate-400 p-3 flex-shrink-0 flex items-center justify-center text-xs text-center border-l border-slate-200">
         點選畫布上的元件<br />來查看屬性
       </div>
     );
@@ -41,32 +41,32 @@ export default function PropertiesPanel({ element, onClose }: Props) {
   };
 
   return (
-    <div className="w-56 bg-gray-800 text-white flex flex-col flex-shrink-0 overflow-y-auto">
-      <div className="p-2 bg-gray-900 flex items-center justify-between">
-        <span className="text-xs font-bold text-gray-300 truncate">{element.name}</span>
-        <button onClick={handleDelete} className="text-gray-400 hover:text-red-400 transition-colors">
+    <div className="w-56 bg-slate-100 text-slate-800 flex flex-col flex-shrink-0 overflow-y-auto border-l border-slate-200">
+      <div className="p-2 bg-slate-200/50 flex items-center justify-between border-b border-slate-200 flex-shrink-0">
+        <span className="text-xs font-bold text-slate-700 truncate">{element.name}</span>
+        <button onClick={handleDelete} className="text-slate-400 hover:text-rose-600 transition-colors cursor-pointer">
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      <div className="p-2 border-b border-gray-700">
-        <div className="text-xs text-gray-400 mb-1">元件類型</div>
-        <div className="text-xs font-mono text-purple-300">{element.type}</div>
+      <div className="p-2 border-b border-slate-200">
+        <div className="text-xs text-slate-500 mb-1">元件類型</div>
+        <div className="text-xs font-mono text-indigo-650">{element.type}</div>
       </div>
 
-      <div className="p-2 border-b border-gray-700">
-        <div className="text-xs text-gray-400 mb-1">名稱</div>
+      <div className="p-2 border-b border-slate-200">
+        <div className="text-xs text-slate-500 mb-1">名稱</div>
         <input
-          className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-full"
+          className="bg-white text-slate-800 text-xs px-2 py-1 rounded w-full border border-slate-300 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10"
           value={element.name}
           onChange={(e) => updateViewElement(element.id, { name: e.target.value })}
         />
       </div>
 
-      <div className="p-2 border-b border-gray-700">
-        <div className="text-xs text-gray-400 mb-1">父元件</div>
+      <div className="p-2 border-b border-slate-200">
+        <div className="text-xs text-slate-500 mb-1">父元件</div>
         <input
-          className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-full"
+          className="bg-white text-slate-800 text-xs px-2 py-1 rounded w-full border border-slate-300 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10"
           value={element.parent}
           placeholder="（無）"
           onChange={(e) => updateViewElement(element.id, { parent: e.target.value })}
@@ -75,34 +75,34 @@ export default function PropertiesPanel({ element, onClose }: Props) {
 
       {/* Properties */}
       <div className="p-2 flex-1">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-gray-400">屬性</span>
-          <button onClick={addProp} className="text-gray-400 hover:text-white transition-colors">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-xs text-slate-500 font-semibold">屬性</span>
+          <button onClick={addProp} className="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer">
             <Plus className="w-3.5 h-3.5" />
           </button>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           {Object.entries(element.properties).map(([key, value]) => (
             <div key={key} className="group">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">{key}</span>
+              <div className="flex items-center justify-between mb-0.5">
+                <span className="text-xs text-slate-600 font-medium">{key}</span>
                 <button
                   onClick={() => removeProp(key)}
-                  className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 transition-all"
+                  className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 transition-all cursor-pointer"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
               {/* Show variable dropdown for common binding props */}
               {['Value', 'X', 'Y', 'SizeX', 'SizeY', 'Checked', 'Minimum', 'Maximum'].includes(key) && varNames.length > 0 ? (
                 <div className="flex gap-1">
                   <input
-                    className="bg-gray-700 text-white text-xs px-1 py-0.5 rounded flex-1 font-mono"
+                    className="bg-white text-slate-800 text-xs px-1.5 py-0.5 rounded flex-1 font-mono border border-slate-300 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10"
                     value={value}
                     onChange={(e) => updateProp(key, e.target.value)}
                   />
                   <select
-                    className="bg-gray-700 text-gray-300 text-xs rounded px-1"
+                    className="bg-slate-50 text-slate-600 text-xs rounded border border-slate-300 px-1 outline-none focus:border-indigo-500 cursor-pointer"
                     value=""
                     onChange={(e) => { if (e.target.value) updateProp(key, e.target.value); }}
                   >
@@ -112,7 +112,7 @@ export default function PropertiesPanel({ element, onClose }: Props) {
                 </div>
               ) : (
                 <input
-                  className="bg-gray-700 text-white text-xs px-1 py-0.5 rounded w-full font-mono"
+                  className="bg-white text-slate-800 text-xs px-1.5 py-0.5 rounded w-full font-mono border border-slate-300 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10"
                   value={value}
                   onChange={(e) => updateProp(key, e.target.value)}
                 />

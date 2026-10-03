@@ -3,6 +3,9 @@ import type { SimulationState, SimulationVariable, OdePage, CodePage, ViewElemen
 
 const DEFAULT_STATE: SimulationState = {
   info: { title: '新模擬', author: '', keywords: '', abstract: '' },
+  description: '',
+  isLocked: false,
+  lockPassword: 'admin2026',
   variables: [],
   odePages: [],
   constraintPages: [],
@@ -19,6 +22,9 @@ interface SimulationStore extends SimulationState {
   // State actions
   loadState: (state: SimulationState) => void;
   resetState: () => void;
+  updateDescription: (html: string) => void;
+  toggleLock: (locked: boolean) => void;
+  updateLockPassword: (password: string) => void;
 
   // Variable actions
   addVariable: (v: Omit<SimulationVariable, 'id'>) => void;
@@ -59,6 +65,9 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
 
   loadState: (state) => set({ ...state }),
   resetState: () => set({ ...DEFAULT_STATE, selectedElementId: null, activeBackdrop: null }),
+  updateDescription: (html) => set({ description: html }),
+  toggleLock: (locked) => set({ isLocked: locked }),
+  updateLockPassword: (password) => set({ lockPassword: password }),
 
   addVariable: (v) =>
     set((s) => ({ variables: [...s.variables, { ...v, scope: v.scope ?? 'global', id: uid() }] })),
