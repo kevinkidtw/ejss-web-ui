@@ -30,10 +30,10 @@ export default function HelpTooltip({ text, side = 'top', className = '' }: Prop
       onMouseEnter={handleEnter}
       onMouseLeave={() => setVisible(false)}
     >
-      <span className="text-[10px] text-gray-500 hover:text-blue-400 leading-none">ⓘ</span>
+      <span className="text-[10px] text-ink-muted hover:text-primary leading-none">ⓘ</span>
       {visible && createPortal(
         <span
-          className="fixed z-[9999] w-56 rounded bg-gray-900 border border-gray-600 px-2.5 py-2 text-[11px] text-gray-200 leading-snug shadow-xl whitespace-normal text-left pointer-events-none"
+          className="fixed z-[9999] w-56 rounded-control bg-card border border-line px-3 py-2 text-[11px] text-ink leading-snug shadow-xl whitespace-normal text-left pointer-events-none border-l-4 border-l-primary"
           style={
             side === 'right'
               ? { top: pos.top, left: pos.left, transform: 'translateY(-50%)' }

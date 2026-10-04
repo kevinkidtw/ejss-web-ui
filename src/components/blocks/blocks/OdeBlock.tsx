@@ -5,10 +5,13 @@ import { useFxInsert } from '../../../hooks/useFxInsert';
 import MathFunctionPicker from '../../ui/MathFunctionPicker';
 
 const METHODS: { value: OdePage['method']; label: string; title: string }[] = [
-  { value: 'Euler',      label: '歐拉法（簡易）',     title: '最基本的積分法，誤差較大，適合學習用' },
-  { value: 'RungeKutta', label: 'RK4 四階法（推薦）', title: '精確度高，適合大多數物理模擬，強烈建議使用' },
-  { value: 'Verlet',     label: 'Verlet 積分（力學）', title: '適合能量守恆問題，如彈簧、行星運動' },
-  { value: 'Fehlberg78', label: '自適應步長法',        title: '自動調整精度，適合剛性或複雜方程' },
+  { value: 'RungeKutta',  label: 'RK4 四階法（標準）',           title: '精確度高，適合大多數物理模擬，強烈建議使用' },
+  { value: 'Verlet',      label: '速度 Verlet（力學守恆）',     title: '二階辛積分，適合彈簧、單擺、行星運動，長時間能量高度守恆' },
+  { value: 'Yoshida4',    label: 'Yoshida 四階辛積分（天體力學）', title: '四階幾何辛積分，萬有引力/多體軌道長時間能量零漂移' },
+  { value: 'RK45',        label: 'RK45 自適應（Dormand-Prince）', title: '五階(四階)自適應步長法，自動調整精度，兼顧速度與極限精確' },
+  { value: 'Fehlberg78',  label: 'RKF78 高階自適應（Fehlberg）',   title: '七階(八階)高階自適應法，適合剛性方程或高精度模擬' },
+  { value: 'EulerCromer', label: '半隱式歐拉法（辛 Euler）',     title: '一階辛積分法，簡諧運動能量有界不發散' },
+  { value: 'Euler',       label: '歐拉法（簡易教學）',           title: '最基本的積分法，誤差較大，適合教學對照' },
 ];
 
 function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
@@ -20,18 +23,18 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
   const fx = useFxInsert(expression, onExprChange);
 
   return (
-    <div className="flex items-start gap-1">
-      <span className="text-blue-100 text-xs font-mono flex-shrink-0 mt-1">d[</span>
+    <div className="flex items-start gap-2">
+      <span className="text-ink-muted text-xs font-mono flex-shrink-0 mt-1.5">d[</span>
       <input
-        className="bg-blue-400 text-white font-mono text-sm px-1.5 py-0.5 rounded w-14 flex-shrink-0 border border-blue-300"
+        className="bg-card text-ink placeholder:text-ink-muted/50 font-mono text-xs px-2 py-1.5 rounded-control w-16 flex-shrink-0 border border-line outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all min-h-[32px]"
         value={state}
         placeholder="x"
         onChange={(e) => onStateChange(e.target.value)}
       />
-      <span className="text-blue-100 text-xs font-mono flex-shrink-0 mt-1">]/dt&nbsp;=</span>
+      <span className="text-ink-muted text-xs font-mono flex-shrink-0 mt-1.5">]/dt&nbsp;=</span>
       {/* textarea auto-expands when expression is long */}
       <textarea
-        className="bg-blue-400 text-white font-mono text-xs px-1.5 py-0.5 rounded flex-1 min-w-0 border border-blue-300 resize-none overflow-hidden leading-relaxed"
+        className="bg-card text-ink placeholder:text-ink-muted/50 font-mono text-xs px-2.5 py-1.5 rounded-control flex-1 min-w-0 border border-line outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none overflow-hidden leading-relaxed transition-all min-h-[32px]"
         rows={1}
         style={{ fieldSizing: 'content' } as React.CSSProperties}
         value={expression}
@@ -42,7 +45,7 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
       <button
         onClick={fx.openPicker}
         title="插入數學函數"
-        className="text-blue-200 hover:text-white text-xs font-bold px-1 transition-colors flex-shrink-0 mt-0.5"
+        className="text-primary hover:text-primary-hover hover:bg-primary-soft text-xs font-bold px-2 py-1.5 rounded-control transition-colors flex-shrink-0 mt-0.5 cursor-pointer min-h-[32px] flex items-center"
       >
         𝑓𝑥
       </button>
@@ -53,7 +56,11 @@ function RateRow({ state, expression, onStateChange, onExprChange, onRemove }: {
           onClose={fx.closePicker}
         />
       )}
-      <button onClick={onRemove} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0 mt-0.5">
+      <button
+        onClick={onRemove}
+        className="text-ink-muted hover:text-danger hover:bg-danger-soft p-1.5 rounded-control transition-colors flex-shrink-0 mt-0.5 cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+        title="刪除方程"
+      >
         <Trash2 className="w-3.5 h-3.5" />
       </button>
     </div>
@@ -64,47 +71,68 @@ export default function OdeBlock({ page }: { page: OdePage }) {
   const { updateOdePage, addOdeRate, updateOdeRate, removeOdeRate, removeOdePage } = useSimulationStore();
 
   return (
-    <div className="bg-blue-500 rounded-lg p-2 shadow-md border-b-4 border-blue-700 mb-2 space-y-1.5">
+    <div className="bg-card border border-line border-l-4 border-l-primary rounded-card p-3.5 shadow-xs hover:border-line/80 transition-all select-none mb-3 space-y-3">
       {/* Header row 1: label + name + trash */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-white font-bold text-sm flex-shrink-0">🔵 微分方程組</span>
+      <div className="flex items-center gap-2">
+        <span className="text-primary font-bold text-sm flex-shrink-0 flex items-center gap-1.5">
+          <span>🔵</span>
+          <span>微分方程組</span>
+        </span>
         <input
-          className="bg-blue-300 text-blue-900 text-sm px-2 py-0.5 rounded flex-1 min-w-0 border border-blue-400"
+          className="bg-paper text-ink placeholder:text-ink-muted/50 text-xs px-2.5 py-1.5 rounded-control flex-1 min-w-0 border border-line outline-none focus:bg-card focus:border-primary transition-all min-h-[32px]"
           value={page.name}
           title="此微分方程組的名稱，可自行命名"
           onChange={(e) => updateOdePage(page.id, { name: e.target.value })}
         />
-        <button onClick={() => removeOdePage(page.id)} className="text-blue-200 hover:text-red-300 transition-colors flex-shrink-0">
+        <button
+          onClick={() => removeOdePage(page.id)}
+          className="text-ink-muted hover:text-danger hover:bg-danger-soft p-1.5 rounded-control transition-all flex-shrink-0 cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+          title="刪除微分方程組"
+        >
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
 
       {/* Header row 2: dt + method */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2.5 flex-wrap">
         <span
-          className="text-blue-100 text-xs flex-shrink-0"
+          className="text-ink-muted text-xs flex-shrink-0"
           title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢"
         >
           時間步長 dt:
         </span>
         <input
-          className="bg-blue-300 text-blue-900 font-mono text-sm px-2 py-0.5 rounded w-14 flex-shrink-0 border border-blue-400"
+          className="bg-paper text-ink placeholder:text-ink-muted/50 font-mono text-xs px-2.5 py-1.5 rounded-control w-16 flex-shrink-0 border border-line outline-none focus:bg-card focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all min-h-[32px]"
           value={page.increment}
           title="時間步長 dt：每次計算前進的時間量，建議 0.001～0.05；越小越精確但越慢"
           onChange={(e) => updateOdePage(page.id, { increment: e.target.value })}
         />
         <select
-          className="bg-blue-300 text-blue-900 text-xs px-1 py-0.5 rounded border border-blue-400 flex-1 min-w-0"
+          className="bg-paper text-ink text-xs px-2 py-1.5 rounded-control border border-line flex-1 min-w-[160px] outline-none focus:bg-card focus:border-primary transition-all min-h-[32px] cursor-pointer"
           value={page.method}
           title={METHODS.find((m) => m.value === page.method)?.title ?? '選擇數值積分方法'}
           onChange={(e) => updateOdePage(page.id, { method: e.target.value as OdePage['method'] })}
         >
-          {METHODS.map((m) => <option key={m.value} value={m.value} title={m.title}>{m.label}</option>)}
+          {METHODS.map((m) => <option key={m.value} value={m.value} className="bg-card text-ink" title={m.title}>{m.label}</option>)}
         </select>
+        {(page.method === 'RK45' || page.method === 'Fehlberg78') && (
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <span className="text-ink-muted text-xs" title="容許誤差：控制自適應步長演算法的截斷誤差">
+              容許誤差 tol:
+            </span>
+            <input
+              className="bg-paper text-ink placeholder:text-ink-muted/50 font-mono text-xs px-2 py-1 rounded-control w-20 border border-line outline-none focus:bg-card focus:border-primary transition-all min-h-[28px]"
+              value={page.tolerance ?? '1e-8'}
+              placeholder="1e-8"
+              title="容許誤差 (例: 1e-8)"
+              onChange={(e) => updateOdePage(page.id, { tolerance: e.target.value })}
+            />
+          </div>
+        )}
       </div>
 
       {/* Rate rows */}
-      <div className="bg-blue-600 rounded p-2 space-y-2">
+      <div className="bg-paper/70 border border-line rounded-control p-3 space-y-2.5">
         {page.rates.map((rate, i) => (
           <RateRow
             key={i}
@@ -117,9 +145,9 @@ export default function OdeBlock({ page }: { page: OdePage }) {
         ))}
         <button
           onClick={() => addOdeRate(page.id)}
-          className="flex items-center gap-1 text-blue-200 hover:text-white text-xs transition-colors mt-1"
+          className="flex items-center gap-1.5 text-primary hover:text-primary-hover text-xs transition-colors mt-1 hover:underline font-semibold cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5" /> 新增方程
+          <Plus className="w-4 h-4" /> 新增方程
         </button>
       </div>
     </div>

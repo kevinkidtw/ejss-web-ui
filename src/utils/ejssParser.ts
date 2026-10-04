@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import type { SimulationState, SimulationVariable, OdePage, CodePage, ViewElement, VarType } from '../types/simulation';
+import { hashPassword } from './lockCrypto';
 
 let idCounter = 0;
 const uid = () => `parse_${Date.now()}_${++idCounter}`;
@@ -73,6 +74,7 @@ export function parseEjssXML(xmlString: string): SimulationState {
       })),
       method: (cdata(content?.Method) || 'RungeKutta') as OdePage['method'],
       increment: cdata(content?.Increment) || 'dt',
+      tolerance: cdata(content?.Tolerance) || undefined,
       comment: cdata(content?.Comment),
     });
   }
@@ -127,13 +129,42 @@ export function parseEjssXML(xmlString: string): SimulationState {
     }
   }
 
+  const absStr = cdata(info?.Abstract) || '';
+  let isLocked = false;
+  let lockHash: string | undefined = undefined;
+  let lockSalt: string | undefined = undefined;
+  let legacyLockPassword: string | undefined = undefined;
+  let cleanDescription = absStr;
+
+  const match = absStr.match(/<!--EJSS_LOCK:(.+?)-->/);
+  if (match) {
+    try {
+      const lockData = JSON.parse(match[1]);
+      isLocked = !!lockData.isLocked;
+      if (lockData.lockHash && lockData.lockSalt) {
+        lockHash = lockData.lockHash;
+        lockSalt = lockData.lockSalt;
+      } else if (lockData.lockPassword) {
+        legacyLockPassword = lockData.lockPassword;
+      }
+      cleanDescription = absStr.replace(/<!--EJSS_LOCK:(.+?)-->/, '').trim();
+    } catch (e) {
+      console.warn('Error parsing EJSS_LOCK:', e);
+    }
+  }
+
   return {
     info: {
       title: cdata(info?.Title) || 'Untitled',
       author: cdata(info?.Author),
       keywords: cdata(info?.Keywords),
-      abstract: cdata(info?.Abstract),
+      abstract: cleanDescription,
     },
+    description: cleanDescription,
+    isLocked,
+    lockHash,
+    lockSalt,
+    legacyLockPassword,
     variables,
     odePages,
     constraintPages,
@@ -142,7 +173,27 @@ export function parseEjssXML(xmlString: string): SimulationState {
   };
 }
 
+export async function migrateLegacyLock(state: SimulationState): Promise<SimulationState> {
+  if (state.legacyLockPassword) {
+    const { hash, salt } = await hashPassword(state.legacyLockPassword);
+    state.lockHash = hash;
+    state.lockSalt = salt;
+    delete state.legacyLockPassword;
+  }
+  return state;
+}
+
 export function serializeToEjssXML(state: SimulationState): string {
+  let lockMeta = '';
+  if (state.isLocked) {
+    lockMeta = `\n<!--EJSS_LOCK:${JSON.stringify({
+      isLocked: true,
+      lockHash: state.lockHash || '',
+      lockSalt: state.lockSalt || '',
+    })}-->`;
+  }
+  const abstractContent = (state.description || '') + lockMeta;
+
   const varPages = groupBy(state.variables, (v) => v.page || 'Variables');
 
   const varPagesXml = Object.entries(varPages)
@@ -181,6 +232,7 @@ export function serializeToEjssXML(state: SimulationState): string {
       <Increment>${p.increment}</Increment>
       ${p.rates.map((r) => `<Rate state="${r.state}"><![CDATA[${r.expression}]]></Rate>`).join('\n      ')}
       <Method>${p.method}</Method>
+      ${p.tolerance ? `<Tolerance>${p.tolerance}</Tolerance>` : ''}
       <Comment><![CDATA[${p.comment}]]></Comment>
     </Content>
   </Osejs.Model.Evolution.Page>`
@@ -239,7 +291,7 @@ export function serializeToEjssXML(state: SimulationState): string {
 <Title><![CDATA[${state.info.title}]]></Title>
 <Author><![CDATA[${state.info.author}]]></Author>
 <Keywords><![CDATA[${state.info.keywords}]]></Keywords>
-<Abstract><![CDATA[${state.info.abstract}]]></Abstract>
+<Abstract><![CDATA[${abstractContent}]]></Abstract>
 <UseInterpreter>true</UseInterpreter>
 <RunInBrowserFirst>true</RunInBrowserFirst>
 </Osejs.Information>
@@ -286,10 +338,14 @@ function groupBy<T>(arr: T[], key: (item: T) => string): Record<string, T[]> {
 export async function readEjssFile(file: File): Promise<SimulationState> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const text = e.target?.result as string;
-        resolve(parseEjssXML(text));
+        const parsed = parseEjssXML(text);
+        if (parsed.legacyLockPassword) {
+          await migrateLegacyLock(parsed);
+        }
+        resolve(parsed);
       } catch (err) {
         reject(err);
       }

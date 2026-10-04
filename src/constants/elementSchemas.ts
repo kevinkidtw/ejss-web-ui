@@ -31,7 +31,7 @@ const ELEMENT_SCHEMAS: Record<string, ElementMeta> = {
       { name: 'MaximumX',     label: 'X 軸最大值',  type: 'number',  defaultValue: '5',       tab: 'init', description: '畫布 X 軸右端對應的物理世界座標，例如 5 代表右邊到 x=5' },
       { name: 'MinimumY',     label: 'Y 軸最小值',  type: 'number',  defaultValue: '-5',      tab: 'init', description: '畫布 Y 軸下端對應的物理世界座標（注意：Y 軸向上為正）' },
       { name: 'MaximumY',     label: 'Y 軸最大值',  type: 'number',  defaultValue: '5',       tab: 'init', description: '畫布 Y 軸上端對應的物理世界座標' },
-      { name: 'Background',   label: '背景色',       type: 'color',   defaultValue: '"white"', tab: 'visual', description: '畫布背景顏色，可用英文顏色名稱如 "white"、"black"，或 "#rrggbb" 格式' },
+      { name: 'Background',   label: '背景色',       type: 'color',   defaultValue: '"#0b0f19"', tab: 'visual', description: '畫布背景顏色，可用英文顏色名稱如 "white"、"black"，或 "#rrggbb" 格式' },
       { name: 'SquareAspect', label: '鎖定等比例',   type: 'boolean', defaultValue: 'false',   tab: 'visual', description: '開啟後 X/Y 軸的單位長度相同，避免圓形被拉成橢圓' },
       { name: 'Enabled',      label: '允許滑鼠互動', type: 'boolean', defaultValue: 'true',    tab: 'behavior', description: '是否允許使用者在畫布上用滑鼠拖曳元素' },
     ],
@@ -46,9 +46,11 @@ const ELEMENT_SCHEMAS: Record<string, ElementMeta> = {
       { name: 'Width',      label: '寬度',     type: 'number',  defaultValue: '400',   tab: 'init',   description: '圖表顯示的寬度（像素）' },
       { name: 'Height',     label: '高度',     type: 'number',  defaultValue: '300',   tab: 'init',   description: '圖表顯示的高度（像素）' },
       { name: 'Title',      label: '標題',     type: 'text',    defaultValue: '"圖表"', tab: 'init',   description: '顯示在圖表頂端的標題文字' },
+      { name: 'AxisX',      label: 'X 軸變數', type: 'text',    defaultValue: '"t"',    tab: 'init',   description: 'X 軸要顯示的變數，通常為時間 t；亦可填寫其他變數名（如 x）以繪製相空間軌跡 (Phase Space)' },
+      { name: 'AxisY',     label: 'Y 軸變數', type: 'text',    defaultValue: '',      tab: 'init',   description: 'Y 軸要顯示的變數，多個變數以逗號分隔，例如 x,vx；留空則自動顯示所有數字變數' },
       { name: 'AutoScaleX', label: '自動縮放X', type: 'boolean', defaultValue: 'true',  tab: 'visual', description: '開啟後 X 軸範圍會自動依資料調整；關閉後可手動設定範圍' },
       { name: 'AutoScaleY', label: '自動縮放Y', type: 'boolean', defaultValue: 'true',  tab: 'visual', description: '開啟後 Y 軸範圍會自動依資料調整；關閉後可手動設定範圍' },
-      { name: 'Background', label: '背景色',   type: 'color',   defaultValue: '"white"', tab: 'visual', description: '圖表背景顏色' },
+      { name: 'Background', label: '背景色',   type: 'color',   defaultValue: '"#0b0f19"', tab: 'visual', description: '圖表背景顏色' },
     ],
   },
   'Elements.Slider': {
@@ -145,6 +147,7 @@ const ELEMENT_SCHEMAS: Record<string, ElementMeta> = {
       { name: 'LineColor',     label: '邊框色', type: 'color',  defaultValue: '"black"', tab: 'visual',   description: '形狀邊框的顏色' },
       { name: 'Transformation',label: '旋轉角度', type: 'text', defaultValue: '0',       tab: 'behavior', description: '旋轉角度，單位為弧度（非角度）；可填入變數名讓它隨時間旋轉' },
       { name: 'Visible',       label: '是否顯示', type: 'boolean', defaultValue: 'true', tab: 'behavior', description: '控制形狀是否顯示，可填入布林變數' },
+      { name: 'Draggable',     label: '允許滑鼠拖曳', type: 'boolean', defaultValue: 'false',   tab: 'behavior', description: '開啟後，使用者可直接在畫布上用滑鼠拖動此形狀，即時改變其 X 與 Y 所綁定的變數值' },
     ],
   },
   'Elements.Spring2D': {
@@ -173,6 +176,7 @@ const ELEMENT_SCHEMAS: Record<string, ElementMeta> = {
       { name: 'SizeX',     label: '向量X',  type: 'text',  defaultValue: '1',     tab: 'init',   description: '箭頭向量的 X 分量，填入速度或力的變數（如 vx）讓箭頭代表向量大小' },
       { name: 'SizeY',     label: '向量Y',  type: 'text',  defaultValue: '0',     tab: 'init',   description: '箭頭向量的 Y 分量，填入速度或力的 Y 分量（如 vy）' },
       { name: 'FillColor', label: '顏色',   type: 'color', defaultValue: '"red"', tab: 'visual', description: '箭頭的顯示顏色' },
+      { name: 'Draggable', label: '允許拖曳箭頭', type: 'boolean', defaultValue: 'false',   tab: 'behavior', description: '開啟後，使用者可直接在畫布上拖拉箭頭的頂端，即時調整 SizeX 與 SizeY 所綁定的向量大小變數' },
     ],
   },
   'Elements.Trail2D': {

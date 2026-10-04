@@ -16,24 +16,34 @@ export default function ConstraintBlock({ page, kind }: Props) {
   const remove = kind === 'constraint' ? removeConstraintPage : removeInitPage;
 
   const color = kind === 'constraint'
-    ? { bg: 'bg-red-500', border: 'border-red-700', inner: 'bg-red-600', light: 'bg-red-400', text: 'text-red-100', label: '🔴 計算/約束' }
-    : { bg: 'bg-green-500', border: 'border-green-700', inner: 'bg-green-600', light: 'bg-green-400', text: 'text-green-100', label: '🟢 初始化' };
+    ? {
+        borderLeft: 'border-l-danger',
+        textAccent: 'text-danger',
+        focusAccent: 'focus:border-danger focus:ring-danger/20',
+        label: '🔴 計算/約束'
+      }
+    : {
+        borderLeft: 'border-l-teal',
+        textAccent: 'text-teal',
+        focusAccent: 'focus:border-teal focus:ring-teal/20',
+        label: '🟢 初始化'
+      };
 
   const fx = useFxInsert(page.code, (v) => update(page.id, { code: v }));
 
   return (
-    <div className={`${color.bg} rounded-lg p-2 shadow-md border-b-4 ${color.border} mb-2`}>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-white font-bold text-sm">{color.label}</span>
+    <div className={`bg-card border border-line border-l-4 ${color.borderLeft} rounded-card p-3.5 shadow-xs hover:border-line/80 transition-all select-none mb-3 space-y-3`}>
+      <div className="flex items-center gap-2">
+        <span className={`${color.textAccent} font-bold text-sm flex-shrink-0`}>{color.label}</span>
         <input
-          className={`${color.light} text-white text-sm px-2 py-0.5 rounded flex-1 border border-opacity-50 border-white`}
+          className={`bg-paper text-ink placeholder:text-ink-muted/50 text-xs px-2.5 py-1.5 rounded-control flex-1 border border-line outline-none focus:bg-card ${color.focusAccent} focus:ring-1 transition-all min-h-[32px]`}
           value={page.name}
           onChange={(e) => update(page.id, { name: e.target.value })}
         />
         <button
           onClick={fx.openPicker}
           title="插入數學函數"
-          className="text-white/70 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded border border-white/30 hover:border-white/60 transition-colors flex-shrink-0"
+          className="text-ink-muted hover:text-ink hover:bg-paper text-xs font-bold px-2.5 py-1.5 rounded-control border border-line transition-colors flex-shrink-0 cursor-pointer min-h-[32px] flex items-center"
         >
           𝑓𝑥
         </button>
@@ -44,16 +54,20 @@ export default function ConstraintBlock({ page, kind }: Props) {
             onClose={fx.closePicker}
           />
         )}
-        <button onClick={() => remove(page.id)} className={`${color.text} hover:text-white transition-colors`}>
+        <button
+          onClick={() => remove(page.id)}
+          className="text-ink-muted hover:text-danger hover:bg-danger-soft p-1.5 rounded-control transition-all flex-shrink-0 cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+          title="刪除"
+        >
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
       <textarea
-        className={`${color.inner} text-white font-mono text-xs px-2 py-1 rounded w-full border border-opacity-30 border-white resize-none overflow-hidden`}
-        rows={4}
+        className={`bg-paper text-ink placeholder:text-ink-muted/50 font-mono text-xs px-3 py-2 rounded-control w-full border border-line outline-none focus:bg-card ${color.focusAccent} focus:ring-1 resize-none overflow-hidden leading-relaxed transition-all`}
         style={{ fieldSizing: 'content' } as React.CSSProperties}
+        rows={4}
         value={page.code}
-        placeholder={kind === 'constraint' ? '// 例: T = 0.5*m*vx*vx;' : '// 例: x = 1.5; vx = 0.0;'}
+        placeholder={kind === 'constraint' ? '// 例: E = 0.5 * m * vx * vx + 0.5 * k * x * x;' : '// 例: x = 2.0; vx = 0.0;'}
         onChange={(e) => update(page.id, { code: e.target.value })}
         {...fx.trackProps}
       />

@@ -1,8 +1,11 @@
 import { create } from 'zustand';
 import type { SimulationState, SimulationVariable, OdePage, CodePage, ViewElement, OdeRate } from '../types/simulation';
+import { migrateLegacyLock } from '../utils/ejssParser';
 
 const DEFAULT_STATE: SimulationState = {
   info: { title: '新模擬', author: '', keywords: '', abstract: '' },
+  description: '',
+  isLocked: false,
   variables: [],
   odePages: [],
   constraintPages: [],
@@ -19,6 +22,10 @@ interface SimulationStore extends SimulationState {
   // State actions
   loadState: (state: SimulationState) => void;
   resetState: () => void;
+  updateDescription: (html: string) => void;
+  toggleLock: (locked: boolean) => void;
+  setLock: (hash: string, salt: string) => void;
+  unlock: () => void;
 
   // Variable actions
   addVariable: (v: Omit<SimulationVariable, 'id'>) => void;
@@ -57,8 +64,23 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
   activeBackdrop: null,
   setActiveBackdrop: (id) => set({ activeBackdrop: id }),
 
-  loadState: (state) => set({ ...state }),
+  loadState: (state) => {
+    set({ ...state });
+    if (state.legacyLockPassword) {
+      migrateLegacyLock(state).then((migrated) => {
+        set({
+          lockHash: migrated.lockHash,
+          lockSalt: migrated.lockSalt,
+          legacyLockPassword: undefined,
+        });
+      });
+    }
+  },
   resetState: () => set({ ...DEFAULT_STATE, selectedElementId: null, activeBackdrop: null }),
+  updateDescription: (html) => set({ description: html }),
+  toggleLock: (locked) => set({ isLocked: locked }),
+  setLock: (hash, salt) => set({ isLocked: true, lockHash: hash, lockSalt: salt }),
+  unlock: () => set({ isLocked: false }),
 
   addVariable: (v) =>
     set((s) => ({ variables: [...s.variables, { ...v, scope: v.scope ?? 'global', id: uid() }] })),
