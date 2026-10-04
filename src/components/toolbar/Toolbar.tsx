@@ -206,7 +206,8 @@ export default function Toolbar({ showRightStage, onToggleRightStage, onOpenMath
     <>
     <header className="h-12 bg-card flex items-center px-4 gap-2 flex-shrink-0 border-b border-line select-none overflow-x-auto scrollbar-none z-20">
       <div className="flex items-center gap-2 mr-2 font-bold text-ink whitespace-nowrap flex-shrink-0 text-sm">
-        <span>🧪</span> EjsS 物理模擬編輯器
+        <span className="text-primary font-black tracking-wider text-base">Kinetix</span>
+        <span className="text-ink-muted text-xs font-normal border-l border-line pl-2 hidden sm:inline">動態物理實驗室</span>
       </div>
 
       <button disabled={isLocked} onClick={() => store.resetState()} className={buttonClass}>
