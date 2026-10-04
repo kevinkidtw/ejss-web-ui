@@ -15,12 +15,22 @@ export interface OdeRate {
   expression: string;
 }
 
+export type SolverMethod =
+  | 'Euler'
+  | 'EulerCromer'
+  | 'Verlet'
+  | 'RungeKutta'
+  | 'RK45'
+  | 'Fehlberg78'
+  | 'Yoshida4';
+
 export interface OdePage {
   id: string;
   name: string;
   rates: OdeRate[];
-  method: 'Euler' | 'RungeKutta' | 'Verlet' | 'Fehlberg78';
+  method: SolverMethod;
   increment: string;
+  tolerance?: string;
   comment: string;
 }
 
@@ -59,7 +69,9 @@ export interface SimulationState {
   info: SimulationInfo;
   description?: string;
   isLocked?: boolean;
-  lockPassword?: string;
+  lockHash?: string;
+  lockSalt?: string;
+  legacyLockPassword?: string;
   variables: SimulationVariable[];
   odePages: OdePage[];
   constraintPages: CodePage[];

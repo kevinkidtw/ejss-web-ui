@@ -309,6 +309,60 @@ const MATH_FUNCTIONS: MathFnGroup[] = [
       },
     ],
   },
+  {
+    category: '物理工具庫 (Physics API)',
+    fns: [
+      {
+        syntax: 'Physics.Forces.gravity(x1, y1, m1, x2, y2, m2, G)',
+        label: '萬有引力',
+        desc: '計算天體 1 所受天體 2 的重力向量，回傳 { fx, fy }',
+        example: 'var f = Physics.Forces.gravity(x, y, m, 0, 0, M, 1.0);',
+        physics: '行星軌道、三體運動、衛星軌道模擬',
+      },
+      {
+        syntax: 'Physics.Forces.lorentz(vx, vy, q, Ex, Ey, Bz)',
+        label: '勞侖茲力 (E & B)',
+        desc: '計算帶電粒子在電場與垂直磁場中的受力，回傳 { fx, fy }',
+        example: 'var f = Physics.Forces.lorentz(vx, vy, -1.0, 0, 0, 2.0);',
+        physics: '陰極射線管 (CRT)、迴旋加速器、磁偏折軌跡',
+      },
+      {
+        syntax: 'Physics.Forces.spring(x1, y1, x2, y2, L0, k, damping, vx1, vy1, vx2, vy2)',
+        label: '虎克彈簧力（含阻尼）',
+        desc: '計算兩點間彈簧力與相對阻尼，回傳 { fx1, fy1, fx2, fy2 }',
+        example: 'var f = Physics.Forces.spring(0, 0, x, y, 1.0, 10.0, 0.2, 0, 0, vx, vy);',
+        physics: '簡諧運動、耦合擺、繩索與彈簧網格',
+      },
+      {
+        syntax: 'Physics.Collision.resolveCircles(p1, v1, m1, r1, p2, v2, m2, r2, e)',
+        label: '雙球二維碰撞（動量守恆）',
+        desc: '計算兩圓球彈性/非彈性碰撞，原地更新速度並修正重疊，回傳衝量大小',
+        example: 'Physics.Collision.resolveCircles(p1, v1, m1, r1, p2, v2, m2, r2, 1.0);',
+        physics: '硬球分子碰撞、桌球模擬、動量與動能守恆驗證',
+      },
+      {
+        syntax: 'Physics.Collision.resolveBox(pos, vel, r, bounds, e, friction)',
+        label: '容器邊界反彈',
+        desc: '限制粒子在矩形邊界內並根據恢復係數 e 反彈，回傳衝量',
+        example: 'Physics.Collision.resolveBox(pos, vel, 0.1, { minX: -4, maxX: 4, minY: -4, maxY: 4 }, 1.0);',
+        physics: '密閉容器氣體碰撞、反彈球運動',
+      },
+      {
+        syntax: 'Physics.Thermo.sampleMaxwellBoltzmann2D(T, m)',
+        label: '馬克士威-波茲曼速率分佈',
+        desc: '根據熱力學溫度 T 與粒子質量 m 取樣初始速率，回傳 { vx, vy, speed }',
+        example: 'var v = Physics.Thermo.sampleMaxwellBoltzmann2D(1.0, 1.0);',
+        physics: '氣體動力論、分子熱運動速率初始分佈',
+      },
+      {
+        syntax: 'Physics.Fields.traceFieldLine(x, y, charges, stepSize, maxSteps, bounds)',
+        label: '電場線追蹤 (Streamline)',
+        desc: '以二階龍格-庫塔法沿場向量追蹤電場線，回傳座標點陣列 [[x0,y0], [x1,y1], ...]',
+        example: 'var pts = Physics.Fields.traceFieldLine(startX, startY, charges);',
+        physics: '靜電場電力線、偶極子場分佈視覺化',
+      },
+    ],
+  },
 ];
 
 export default MATH_FUNCTIONS;

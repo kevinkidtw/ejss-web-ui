@@ -47,6 +47,7 @@ export default function App() {
   // If locked, restrict open tabs to Description and Stage
   useEffect(() => {
     if (isLocked) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenTabIds([DESC_TAB, STAGE_TAB]);
       if (activeTabId !== DESC_TAB && activeTabId !== STAGE_TAB) {
         setActiveTabId(DESC_TAB);
@@ -64,6 +65,7 @@ export default function App() {
   // When an element is selected, open/activate its tab
   useEffect(() => {
     if (!selectedElementId) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenTabIds((prev) => prev.includes(selectedElementId) ? prev : [...prev, selectedElementId]);
     setActiveTabId(selectedElementId);
   }, [selectedElementId]);
@@ -84,6 +86,7 @@ export default function App() {
     const liveIds = new Set(viewElements.map((e) => e.id));
     const isSpecial = (id: string) =>
       id === SCRIPT_TAB || id === STAGE_TAB || id === DESC_TAB || id === MATH_TAB;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenTabIds((prev) => {
       const next = prev.filter((id) => isSpecial(id) || liveIds.has(id));
       return next.length ? next : [DESC_TAB, SCRIPT_TAB];
@@ -113,26 +116,26 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
+    <div className="h-screen flex flex-col bg-paper overflow-hidden text-ink font-sans">
       <Toolbar showRightStage={showRightStage} onToggleRightStage={() => setShowRightStage((v) => !v)} onOpenMath={handleOpenMath} />
 
       <div className="flex flex-1 overflow-hidden min-h-0">
         {/* Left: block palette (top) + element list / backdrop tabs (bottom) */}
         {!stageFullscreen && !isLocked && (
-          <div className="w-[312px] flex flex-col flex-shrink-0 border-r border-slate-200 overflow-hidden min-h-0">
+          <div className="w-[312px] flex flex-col flex-shrink-0 border-r border-line bg-card overflow-hidden min-h-0">
             <div className="flex-shrink-0 overflow-y-auto max-h-[56%]">
               <BlockPalette />
             </div>
-            <div className="flex-1 border-t border-slate-200 overflow-hidden min-h-0">
+            <div className="flex-1 border-t border-line overflow-hidden min-h-0">
               <SpriteList />
             </div>
           </div>
         )}
 
         {/* Center: tabs */}
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0 min-h-0">
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0 min-h-0 bg-paper">
           {/* Tab bar */}
-          <div className="flex items-end bg-slate-100 border-b border-slate-200 overflow-x-auto flex-shrink-0">
+          <div className="flex items-end bg-paper border-b border-line px-2 gap-1 overflow-x-auto flex-shrink-0 pt-1.5">
             {openTabIds.map((tabId) => {
               const info = buildTabInfo(tabId);
               const isActive = activeTabId === tabId;
@@ -140,10 +143,10 @@ export default function App() {
                 <div
                   key={tabId}
                   onClick={() => setActiveTabId(tabId)}
-                  className={`flex items-center gap-1.5 px-3 py-2 cursor-pointer text-xs border-b-2 whitespace-nowrap flex-shrink-0 transition-all
+                  className={`flex items-center gap-1.5 px-3.5 py-2 cursor-pointer text-xs rounded-t-control border-t border-x transition-all min-h-[38px]
                     ${isActive
-                      ? 'border-indigo-600 text-slate-900 bg-white font-semibold'
-                      : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'}`}
+                      ? 'bg-card border-line border-b-transparent text-primary font-bold shadow-xs -mb-px z-10'
+                      : 'border-transparent text-ink-muted hover:text-ink hover:bg-card/50'}`}
                 >
                   <span className="flex items-center gap-1">
                     {tabId === SCRIPT_TAB || tabId === STAGE_TAB || tabId === DESC_TAB || tabId === MATH_TAB ? (
@@ -151,13 +154,13 @@ export default function App() {
                     ) : (
                       (() => {
                         const el = viewElements.find((e) => e.id === tabId);
-                        return el ? <ElementIcon type={el.type} className="w-3.5 h-3.5 text-indigo-650 inline" /> : '□';
+                        return el ? <ElementIcon type={el.type} className="w-3.5 h-3.5 text-primary inline" /> : '□';
                       })()
                     )}
                   </span>
                   <span className="max-w-[120px] truncate">{info.label}</span>
                   {tabId !== SCRIPT_TAB && tabId !== DESC_TAB && (
-                    <button onClick={(e) => closeTab(tabId, e)} className="ml-1.5 text-slate-400 hover:text-rose-600 transition-colors">
+                    <button onClick={(e) => closeTab(tabId, e)} className="ml-1.5 text-ink-muted hover:text-danger transition-colors cursor-pointer p-0.5 rounded-full hover:bg-paper">
                       <X className="w-3 h-3" />
                     </button>
                   )}
@@ -167,7 +170,7 @@ export default function App() {
           </div>
 
           {/* Tab content — each child must be h-full to scroll properly */}
-          <div className="flex-1 min-h-0 overflow-hidden bg-slate-50">
+          <div className="flex-1 min-h-0 overflow-hidden bg-paper">
             {activeTabId === STAGE_TAB ? (
               <StagePanel />
             ) : activeTabId === MATH_TAB ? (
@@ -184,7 +187,7 @@ export default function App() {
 
         {/* Right: simulation stage only */}
         {!stageFullscreen && showRightStage && (
-          <div className="flex-1 flex flex-col border-l border-slate-200 min-w-0 min-h-0">
+          <div className="flex-1 flex flex-col border-l border-line min-w-0 min-h-0">
             <StagePanel />
           </div>
         )}

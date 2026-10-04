@@ -9,20 +9,20 @@ export default function ScriptCanvas() {
   const empty = !globalVars.length && !odePages.length && !constraintPages.length && !initPages.length;
 
   return (
-    <div className="h-full bg-slate-50 overflow-y-auto p-5" style={{ backgroundImage: 'radial-gradient(circle, #e2e8f0 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}>
+    <div className="h-full bg-paper overflow-y-auto p-5" style={{ backgroundImage: 'radial-gradient(circle, #E5E1D8 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}>
       <div className="w-full max-w-4xl mx-auto space-y-6">
       {empty && (
-        <div className="flex flex-col items-center justify-center h-full text-slate-450 pt-20">
+        <div className="flex flex-col items-center justify-center h-full text-ink-muted/60 pt-20">
           <div className="text-5xl mb-4 opacity-40">🧩</div>
-          <p className="text-base font-semibold">從左側面板新增積木</p>
-          <p className="text-xs mt-1 text-slate-500">或點選元件後新增元件專屬變數</p>
+          <p className="text-base font-semibold text-ink">從左側面板新增積木</p>
+          <p className="text-xs mt-1 text-ink-muted">或點選元件後新增元件專屬變數</p>
         </div>
       )}
 
       {initPages.length > 0 && (
         <section>
-          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 border-b border-slate-200 pb-1.5 flex items-center gap-1.5" title="模擬開始時只執行一次的程式碼，用來設定初始條件">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <div className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2.5 border-b border-line pb-1.5 flex items-center gap-1.5" title="模擬開始時只執行一次的程式碼，用來設定初始條件">
+            <span className="w-2 h-2 rounded-full bg-teal" />
             初始化
           </div>
           {initPages.map((p) => (
@@ -33,8 +33,8 @@ export default function ScriptCanvas() {
 
       {globalVars.length > 0 && (
         <section>
-          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 border-b border-slate-200 pb-1.5 flex items-center gap-1.5" title="整個模擬都能使用的數值，例如位置 x、速度 vx、質量 m">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+          <div className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2.5 border-b border-line pb-1.5 flex items-center gap-1.5" title="整個模擬都能使用的數值，例如位置 x、速度 vx、質量 m">
+            <span className="w-2 h-2 rounded-full bg-amber" />
             模型變數
           </div>
           {globalVars.map((v) => (
@@ -45,8 +45,8 @@ export default function ScriptCanvas() {
 
       {odePages.length > 0 && (
         <section>
-          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 border-b border-slate-200 pb-1.5 flex items-center gap-1.5" title="描述變數如何隨時間變化，例如 dx/dt=vx 表示位置由速度決定">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+          <div className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2.5 border-b border-line pb-1.5 flex items-center gap-1.5" title="描述變數如何隨時間變化，例如 dx/dt=vx 表示位置由速度決定">
+            <span className="w-2 h-2 rounded-full bg-primary" />
             微分方程組
           </div>
           {odePages.map((p) => (
@@ -57,8 +57,8 @@ export default function ScriptCanvas() {
 
       {constraintPages.length > 0 && (
         <section>
-          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 border-b border-slate-200 pb-1.5 flex items-center gap-1.5" title="每個時間步都重新計算的算式，例如 F=k*x 或 E=0.5*m*vx^2">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+          <div className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2.5 border-b border-line pb-1.5 flex items-center gap-1.5" title="每個時間步都重新計算的算式，例如 F=k*x 或 E=0.5*m*vx^2">
+            <span className="w-2 h-2 rounded-full bg-danger" />
             計算 / 約束
           </div>
           {constraintPages.map((p) => (

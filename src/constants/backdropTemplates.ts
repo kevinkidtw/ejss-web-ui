@@ -8,7 +8,6 @@ export interface BackdropTemplate {
   elements: Omit<ViewElement, 'id'>[];
 }
 
-let _n = 0;
 const mk = (overrides: Omit<ViewElement, 'id'>): Omit<ViewElement, 'id'> => overrides;
 
 export const BACKDROP_TEMPLATES: BackdropTemplate[] = [
@@ -72,5 +71,3 @@ export const BACKDROP_TEMPLATES: BackdropTemplate[] = [
     ],
   },
 ];
-// suppress unused var from the counter helper
-void _n;

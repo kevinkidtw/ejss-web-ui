@@ -32,35 +32,35 @@ function ContextMenu({ menu, onClose }: { menu: ContextMenuState; onClose: () =>
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-xl py-1 min-w-[180px] text-sm"
+      className="fixed z-50 bg-card border border-line rounded-control shadow-xl py-1 min-w-[180px] text-sm"
       style={{ left: menu.x, top: menu.y }}
     >
-      <div className="px-3 py-1.5 border-b border-slate-200">
-        <span className="text-slate-800 font-bold text-xs flex items-center gap-1.5">
-          <ElementIcon type={el.type} className="w-3.5 h-3.5 text-indigo-600 inline-block" />
+      <div className="px-3 py-1.5 border-b border-line">
+        <span className="text-ink font-bold text-xs flex items-center gap-1.5">
+          <ElementIcon type={el.type} className="w-3.5 h-3.5 text-primary inline-block" />
           {el.name}
         </span>
-        <div className="text-[10px] text-indigo-600 font-mono">{el.type}</div>
+        <div className="text-[10px] text-primary font-mono">{el.type}</div>
       </div>
       {descriptions.length > 0 && (
-        <div className="px-3 py-2 border-b border-slate-100 max-w-[260px]">
-          <div className="text-[10px] text-slate-400 uppercase mb-1">屬性說明</div>
+        <div className="px-3 py-2 border-b border-line max-w-[260px]">
+          <div className="text-[10px] text-ink-muted uppercase mb-1">屬性說明</div>
           {meta!.schema.filter((s) => s.description).slice(0, 4).map((s) => (
-            <div key={s.name} className="text-[11px] text-slate-600 leading-snug mb-1">
-              <span className="text-indigo-600 font-mono">{s.label}：</span>{s.description}
+            <div key={s.name} className="text-[11px] text-ink-muted leading-snug mb-1">
+              <span className="text-primary font-mono">{s.label}：</span>{s.description}
             </div>
           ))}
         </div>
       )}
       <button
         onClick={() => { setSelectedElement(el.id); onClose(); }}
-        className="w-full text-left px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition-colors text-xs cursor-pointer"
+        className="w-full text-left px-3 py-1.5 text-ink hover:bg-primary-soft transition-colors text-xs cursor-pointer"
       >
         ✏️ 開啟編輯頁面
       </button>
       <button
         onClick={() => { removeViewElement(el.id); setSelectedElement(null); onClose(); }}
-        className="w-full text-left px-3 py-1.5 text-rose-600 hover:bg-rose-50 transition-colors text-xs cursor-pointer"
+        className="w-full text-left px-3 py-1.5 text-danger hover:bg-danger-soft transition-colors text-xs cursor-pointer"
       >
         🗑 刪除此元件
       </button>
@@ -83,13 +83,13 @@ export default function SpriteList() {
   };
 
   return (
-    <div className="bg-slate-50 flex flex-col overflow-hidden h-full">
+    <div className="bg-paper flex flex-col overflow-hidden h-full border-r border-line">
       {/* Header */}
-      <div className="flex items-center bg-slate-100 border-b border-slate-200 flex-shrink-0 px-3 py-1.5 gap-1.5">
-        <span className="flex-1 text-[11px] font-bold text-slate-500 tracking-wide">元件列表</span>
+      <div className="flex items-center bg-paper border-b border-line flex-shrink-0 px-3 py-2 gap-1.5">
+        <span className="flex-1 text-[11px] font-bold text-ink-muted tracking-wide">元件列表</span>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-0.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded px-2 py-1 text-[10px] font-bold transition-all shadow-sm flex-shrink-0 cursor-pointer"
+          className="flex items-center gap-0.5 bg-primary hover:bg-primary-hover text-white rounded-control px-2.5 py-1 text-xs font-semibold transition-all shadow-xs flex-shrink-0 cursor-pointer min-h-[30px]"
         >
           <Plus className="w-3.5 h-3.5" /> 新增
         </button>
@@ -99,7 +99,7 @@ export default function SpriteList() {
         {topLevel.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-1.5 py-8 text-center px-3">
             <span className="text-2xl opacity-20">🖼</span>
-            <p className="text-slate-400 text-[10px] leading-snug font-medium">尚無元件<br />點擊上方「新增」加入畫布元件</p>
+            <p className="text-ink-muted text-[11px] leading-snug font-medium">尚無元件<br />點擊上方「新增」加入畫布元件</p>
           </div>
         ) : (
           <div className="flex flex-col gap-1.5 p-2">
@@ -111,25 +111,25 @@ export default function SpriteList() {
                   <div
                     onClick={() => setSelectedElement(isSelected ? null : el.id)}
                     onContextMenu={(e) => handleContextMenu(e, el.id)}
-                    className={`relative flex items-center gap-2 rounded-lg border-2 cursor-pointer transition-all px-2 py-1.5
-                      ${isSelected ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'}`}
+                    className={`relative flex items-center gap-2 rounded-control border-2 cursor-pointer transition-all px-2.5 py-1.5 min-h-[38px]
+                      ${isSelected ? 'border-primary bg-primary-soft/50 shadow-xs' : 'border-line bg-card hover:border-line/80'}`}
                   >
-                    <div className="w-7 h-7 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <ElementIcon type={el.type} className="w-4 h-4 text-indigo-600" />
+                    <div className="w-7 h-7 bg-paper border border-line rounded-control flex items-center justify-center flex-shrink-0">
+                      <ElementIcon type={el.type} className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[11px] text-slate-800 font-semibold truncate leading-tight">{el.name}</div>
-                      <div className="text-[9px] text-slate-400 truncate">{el.type.split('.')[1]}</div>
+                      <div className="text-xs text-ink font-semibold truncate leading-tight">{el.name}</div>
+                      <div className="text-[10px] text-ink-muted truncate font-mono">{el.type.split('.')[1]}</div>
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); removeViewElement(el.id); if (isSelected) setSelectedElement(null); }}
-                      className="text-slate-400 hover:text-rose-600 hover:bg-slate-100 p-1 rounded transition-colors flex-shrink-0"
+                      className="text-ink-muted hover:text-danger hover:bg-danger-soft p-1 rounded-control transition-colors flex-shrink-0 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                   {children.length > 0 && (
-                    <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-slate-200 pl-2">
+                    <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-line pl-2">
                       {children.map((child) => {
                         const cSelected = child.id === selectedElementId;
                         return (
@@ -137,19 +137,19 @@ export default function SpriteList() {
                             key={child.id}
                             onClick={() => setSelectedElement(cSelected ? null : child.id)}
                             onContextMenu={(e) => handleContextMenu(e, child.id)}
-                            className={`relative flex items-center gap-2 rounded-md border cursor-pointer transition-all px-2 py-1
-                              ${cSelected ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-200/80 bg-white/70 hover:border-slate-300'}`}
+                            className={`relative flex items-center gap-2 rounded-control border cursor-pointer transition-all px-2 py-1 min-h-[34px]
+                              ${cSelected ? 'border-primary bg-primary-soft/40 shadow-xs' : 'border-line bg-card/80 hover:border-line/80'}`}
                           >
-                            <div className="w-6 h-6 bg-slate-50 border border-slate-200 rounded flex items-center justify-center flex-shrink-0">
-                              <ElementIcon type={child.type} className="w-3.5 h-3.5 text-indigo-600" />
+                            <div className="w-6 h-6 bg-paper border border-line rounded flex items-center justify-center flex-shrink-0">
+                              <ElementIcon type={child.type} className="w-3.5 h-3.5 text-primary" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="text-[10px] text-slate-700 font-medium truncate leading-tight">{child.name}</div>
-                              <div className="text-[9px] text-slate-400 truncate">{child.type.split('.')[1]}</div>
+                              <div className="text-[11px] text-ink font-medium truncate leading-tight">{child.name}</div>
+                              <div className="text-[10px] text-ink-muted truncate font-mono">{child.type.split('.')[1]}</div>
                             </div>
                             <button
                               onClick={(e) => { e.stopPropagation(); removeViewElement(child.id); if (cSelected) setSelectedElement(null); }}
-                              className="text-slate-400 hover:text-rose-600 hover:bg-slate-100 p-1 rounded transition-colors flex-shrink-0"
+                              className="text-ink-muted hover:text-danger hover:bg-danger-soft p-1 rounded-control transition-colors flex-shrink-0 cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>

@@ -18,17 +18,17 @@ export default function BackdropSelector() {
   };
 
   return (
-    <div className="flex-1 bg-gray-100 overflow-y-auto p-4" style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
-      <div className="text-xs font-bold text-gray-500 uppercase mb-3">選擇背景模板</div>
+    <div className="flex-1 bg-paper overflow-y-auto p-5" style={{ backgroundImage: 'radial-gradient(circle, #E5E1D8 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}>
+      <div className="text-xs font-bold text-ink-muted uppercase mb-3">選擇背景模板</div>
       <div className="grid grid-cols-2 gap-4 max-w-2xl">
         {BACKDROP_TEMPLATES.map((t) => (
           <button
             key={t.id}
             onClick={() => handleSelect(t.id)}
-            className={`rounded-xl border-2 overflow-hidden text-left transition-all shadow-sm
-              ${activeBackdrop === t.id ? 'border-purple-500 ring-2 ring-purple-300' : 'border-gray-300 hover:border-gray-400'}`}
+            className={`rounded-card border-2 overflow-hidden text-left transition-all shadow-xs cursor-pointer
+              ${activeBackdrop === t.id ? 'border-primary ring-2 ring-primary/20 bg-card' : 'border-line hover:border-line/80 bg-card'}`}
           >
-            <div className="bg-white flex items-center justify-center h-32 overflow-hidden">
+            <div className="bg-card flex items-center justify-center h-32 overflow-hidden">
               <img
                 src={import.meta.env.BASE_URL.replace(/\/$/, '') + t.preview}
                 alt={t.label}
@@ -36,9 +36,9 @@ export default function BackdropSelector() {
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             </div>
-            <div className="bg-gray-50 px-3 py-2 border-t border-gray-200">
-              <div className="text-sm font-bold text-gray-700">{t.label}</div>
-              <div className="text-xs text-gray-500">{t.description}</div>
+            <div className="bg-paper px-3.5 py-2.5 border-t border-line">
+              <div className="text-sm font-bold text-ink">{t.label}</div>
+              <div className="text-xs text-ink-muted mt-0.5">{t.description}</div>
             </div>
           </button>
         ))}

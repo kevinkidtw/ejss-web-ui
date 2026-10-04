@@ -15,7 +15,7 @@ import {
   Palette 
 } from 'lucide-react';
 
-export const ELEMENT_ICONS: Record<string, React.ComponentType<any>> = {
+const ELEMENT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   'Elements.DrawingPanel': Layout,
   'Elements.PlottingPanel': TrendingUp,
   'Elements.Slider': Sliders,

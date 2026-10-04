@@ -20,7 +20,7 @@ const TAB_LABELS: Record<EditorTab, string> = {
 function Label({ schema }: { schema: PropSchema }) {
   return (
     <div className="flex items-center gap-1 mb-0.5">
-      <span className="text-xs text-slate-500">{schema.label}</span>
+      <span className="text-xs text-ink-muted">{schema.label}</span>
       {schema.description && <HelpTooltip text={schema.description} />}
     </div>
   );
@@ -31,15 +31,15 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
 
   if (schema.type === 'boolean') {
     return (
-      <div className="flex items-center justify-between py-1">
+      <div className="flex items-center justify-between py-1.5">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-600">{schema.label}</span>
+          <span className="text-xs text-ink">{schema.label}</span>
           {schema.description && <HelpTooltip text={schema.description} />}
         </div>
         <button
           onClick={() => onChange(value === 'true' ? 'false' : 'true')}
-          className={`w-10 h-5 rounded-full transition-colors text-[10px] font-bold cursor-pointer
-            ${value === 'true' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-500'}`}
+          className={`w-11 h-6 rounded-full transition-colors text-[10px] font-bold cursor-pointer
+            ${value === 'true' ? 'bg-teal text-white shadow-xs' : 'bg-paper text-ink-muted border border-line'}`}
         >
           {value === 'true' ? 'ON' : 'OFF'}
         </button>
@@ -48,34 +48,34 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
   }
   if (schema.type === 'select' && schema.options) {
     return (
-      <div className="py-1">
+      <div className="py-1.5">
         <Label schema={schema} />
         <select
-          className="bg-slate-50 text-slate-800 text-xs px-2 py-1 rounded border border-slate-200 w-full outline-none focus:bg-white focus:border-indigo-500"
+          className="bg-paper text-ink text-xs px-2.5 py-1.5 rounded-control border border-line w-full outline-none focus:bg-card focus:border-primary transition-all min-h-[32px] cursor-pointer"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
-          {schema.options.map((o) => <option key={o} value={o} className="bg-white text-slate-800">{o}</option>)}
+          {schema.options.map((o) => <option key={o} value={o} className="bg-card text-ink">{o}</option>)}
         </select>
       </div>
     );
   }
   if (schema.type === 'code') {
     return (
-      <div className="py-1">
+      <div className="py-1.5">
         <div className="flex items-center justify-between mb-0.5">
           <Label schema={schema} />
           <button
             onClick={fx.openPicker}
             title="插入數學函數"
-            className="text-[10px] text-slate-400 hover:text-indigo-600 font-bold px-1 transition-colors"
+            className="text-[10px] text-ink-muted hover:text-primary font-bold px-1.5 py-0.5 rounded transition-colors cursor-pointer"
           >𝑓𝑥</button>
           {fx.pickerAnchor && (
             <MathFunctionPicker anchor={fx.pickerAnchor} onSelect={fx.insert} onClose={fx.closePicker} />
           )}
         </div>
         <textarea
-          className="bg-slate-50 text-emerald-750 font-mono text-xs px-2 py-1 border border-slate-200 rounded w-full resize-none overflow-hidden outline-none focus:bg-white focus:border-indigo-500"
+          className="bg-paper text-ink font-mono text-xs px-2.5 py-1.5 border border-line rounded-control w-full resize-none overflow-hidden outline-none focus:bg-card focus:border-primary transition-all leading-relaxed"
           rows={3}
           style={{ fieldSizing: 'content' } as React.CSSProperties}
           value={value}
@@ -88,11 +88,11 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
   if (schema.type === 'color') {
     const raw = value.replace(/^"|"$/g, '');
     return (
-      <div className="py-1">
+      <div className="py-1.5">
         <Label schema={schema} />
         <div className="flex items-center gap-2">
           <input
-            className="bg-slate-50 text-slate-800 text-xs px-2 py-1 border border-slate-200 rounded flex-1 font-mono outline-none focus:bg-white focus:border-indigo-500"
+            className="bg-paper text-ink text-xs px-2.5 py-1.5 border border-line rounded-control flex-1 font-mono outline-none focus:bg-card focus:border-primary transition-all min-h-[32px]"
             value={value}
             onChange={(e) => onChange(e.target.value)}
           />
@@ -100,27 +100,27 @@ function PropRow({ schema, value, onChange }: { schema: PropSchema; value: strin
             type="color"
             value={raw.startsWith('#') ? raw : '#ffffff'}
             onChange={(e) => onChange(`"${e.target.value}"`)}
-            className="w-6 h-6 rounded cursor-pointer border border-slate-200 p-0 flex-shrink-0"
+            className="w-7 h-7 rounded-control cursor-pointer border border-line p-0 flex-shrink-0"
           />
         </div>
       </div>
     );
   }
   return (
-    <div className="py-1">
+    <div className="py-1.5">
       <div className="flex items-center justify-between mb-0.5">
         <Label schema={schema} />
         <button
           onClick={fx.openPicker}
           title="插入數學函數"
-          className="text-[10px] text-slate-400 hover:text-indigo-600 font-bold px-1 transition-colors"
+          className="text-[10px] text-ink-muted hover:text-primary font-bold px-1.5 py-0.5 rounded transition-colors cursor-pointer"
         >𝑓𝑥</button>
         {fx.pickerAnchor && (
           <MathFunctionPicker anchor={fx.pickerAnchor} onSelect={fx.insert} onClose={fx.closePicker} />
         )}
       </div>
       <input
-        className="bg-slate-50 text-slate-800 text-xs px-2 py-1 border border-slate-200 rounded w-full font-mono outline-none focus:bg-white focus:border-indigo-500"
+        className="bg-paper text-ink text-xs px-2.5 py-1.5 border border-line rounded-control w-full font-mono outline-none focus:bg-card focus:border-primary transition-all min-h-[32px]"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         {...fx.trackProps}
@@ -137,25 +137,25 @@ function ExtraProps({ el }: { el: ViewElement }) {
 
   if (extraEntries.length === 0) return null;
   return (
-    <div className="mt-3 pt-3 border-t border-slate-200">
-      <div className="text-[10px] text-slate-400 uppercase mb-1 font-semibold">其他屬性</div>
+    <div className="mt-3 pt-3 border-t border-line">
+      <div className="text-[10px] text-ink-muted uppercase mb-1 font-semibold">其他屬性</div>
       {extraEntries.map(([k, v]) => (
-        <div key={k} className="py-1">
+        <div key={k} className="py-1.5">
           <div className="flex items-center justify-between mb-0.5">
-            <span className="text-xs text-slate-500 font-mono">{k}</span>
+            <span className="text-xs text-ink-muted font-mono">{k}</span>
             <button
               onClick={() => {
                 const props = { ...el.properties };
                 delete props[k];
                 updateViewElement(el.id, { properties: props });
               }}
-              className="text-slate-400 hover:text-rose-600 hover:bg-slate-50 p-1 rounded transition-colors"
+              className="text-ink-muted hover:text-danger hover:bg-danger-soft p-1 rounded-control transition-colors cursor-pointer"
             >
               <Trash2 className="w-3 h-3" />
             </button>
           </div>
           <input
-            className="bg-slate-50 text-slate-800 text-xs px-2 py-1 border border-slate-200 rounded w-full font-mono outline-none focus:bg-white focus:border-indigo-500"
+            className="bg-paper text-ink text-xs px-2.5 py-1.5 border border-line rounded-control w-full font-mono outline-none focus:bg-card focus:border-primary transition-all min-h-[32px]"
             value={v}
             onChange={(e) => updateViewElement(el.id, { properties: { ...el.properties, [k]: e.target.value } })}
           />
@@ -190,33 +190,33 @@ export default function SpriteEditor({ elementId }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-hidden min-h-0">
+    <div className="flex flex-col h-full bg-card overflow-hidden min-h-0">
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-50 border-b border-slate-200 flex-shrink-0">
-        <div className="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-          <ElementIcon type={el.type} className="w-4.5 h-4.5 text-indigo-600" />
+      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-paper border-b border-line flex-shrink-0">
+        <div className="w-8 h-8 bg-card border border-line rounded-control flex items-center justify-center flex-shrink-0 shadow-xs">
+          <ElementIcon type={el.type} className="w-4.5 h-4.5 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
           <input
-            className="bg-transparent text-slate-800 text-sm font-bold w-full truncate focus:outline-none focus:bg-slate-100 rounded px-1"
+            className="bg-transparent text-ink text-sm font-bold w-full truncate focus:outline-none focus:bg-card rounded-control px-1 py-0.5"
             value={el.name}
             onChange={(e) => updateViewElement(el.id, { name: e.target.value })}
           />
-          <div className="text-[10px] text-indigo-650 font-mono leading-none mt-0.5">{el.type}</div>
+          <div className="text-[10px] text-primary font-mono leading-none mt-0.5">{el.type}</div>
         </div>
-        <button onClick={handleDelete} className="text-slate-400 hover:text-rose-600 p-1 hover:bg-slate-100 rounded transition-colors cursor-pointer">
+        <button onClick={handleDelete} className="text-ink-muted hover:text-danger p-1.5 hover:bg-danger-soft rounded-control transition-colors cursor-pointer" title="刪除元件">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-slate-50 border-b border-slate-200 flex-shrink-0">
+      <div className="flex bg-paper border-b border-line flex-shrink-0">
         {(Object.keys(TAB_LABELS) as EditorTab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 text-xs py-2 transition-all cursor-pointer border-b-2
-              ${activeTab === tab ? 'bg-white text-slate-900 font-bold border-indigo-600' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 border-transparent'}`}
+            className={`flex-1 text-xs py-2 min-h-[36px] transition-all cursor-pointer border-b-2
+              ${activeTab === tab ? 'bg-card text-primary font-bold border-primary' : 'text-ink-muted hover:text-ink hover:bg-paper/80 border-transparent font-medium'}`}
           >
             {TAB_LABELS[tab]}
           </button>
@@ -224,9 +224,9 @@ export default function SpriteEditor({ elementId }: Props) {
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-y-auto px-3 py-2 bg-white">
+      <div className="flex-1 overflow-y-auto px-3 py-2.5 bg-card">
         {schemaForTab.length === 0 && activeTab !== 'visual' && (
-          <p className="text-xs text-slate-400 text-center py-6">此元件在此頁沒有設定項</p>
+          <p className="text-xs text-ink-muted text-center py-6">此元件在此頁沒有設定項</p>
         )}
         {schemaForTab.map((s) => (
           <PropRow

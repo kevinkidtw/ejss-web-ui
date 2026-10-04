@@ -37,18 +37,18 @@ export default function MathFunctionPicker({ anchor, onSelect, onClose }: Props)
   return createPortal(
     <div
       ref={ref}
-      className="fixed z-[9999] w-80 bg-white border border-slate-200 rounded-lg shadow-2xl flex flex-col"
+      className="fixed z-[9999] w-80 bg-card border border-line rounded-card shadow-2xl flex flex-col overflow-hidden"
       style={{ top, left, maxHeight: pickerH }}
     >
-      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 flex-shrink-0">
-        <span className="text-xs font-bold text-indigo-650">𝑓(𝑥) 插入數學函數</span>
-        <button onClick={onClose} className="text-slate-450 hover:text-slate-700 text-xs leading-none cursor-pointer">✕</button>
+      <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-line bg-paper flex-shrink-0">
+        <span className="text-xs font-bold text-primary">𝑓(𝑥) 插入數學函數</span>
+        <button onClick={onClose} className="text-ink-muted hover:text-ink text-xs leading-none cursor-pointer p-1 rounded-control" title="關閉">✕</button>
       </div>
 
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto flex-1 bg-card">
         {MATH_FUNCTIONS.map((group) => (
-          <div key={group.category} className="border-b border-slate-100 last:border-0">
-            <div className="px-3 py-1 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wide sticky top-0">
+          <div key={group.category} className="border-b border-line/60 last:border-0">
+            <div className="px-3.5 py-1 bg-paper/80 text-[10px] font-bold text-ink-muted uppercase tracking-wide sticky top-0 border-b border-line/50">
               {group.category}
             </div>
             <div className="py-0.5">
@@ -57,12 +57,12 @@ export default function MathFunctionPicker({ anchor, onSelect, onClose }: Props)
                   key={fn.syntax}
                   onClick={() => { onSelect(fn.syntax); onClose(); }}
                   title={fn.desc}
-                  className="w-full flex items-baseline gap-2 px-3 py-1 hover:bg-slate-50 text-left transition-colors group cursor-pointer"
+                  className="w-full flex items-baseline gap-2 px-3.5 py-1.5 hover:bg-paper text-left transition-colors group cursor-pointer"
                 >
-                  <span className="font-mono text-[11px] text-emerald-700 whitespace-nowrap flex-shrink-0 group-hover:text-emerald-800">
+                  <span className="font-mono text-[11px] text-teal whitespace-nowrap flex-shrink-0 group-hover:text-teal font-semibold">
                     {fn.syntax}
                   </span>
-                  <span className="text-[10px] text-slate-450 group-hover:text-slate-600 truncate">
+                  <span className="text-[10px] text-ink-muted group-hover:text-ink truncate">
                     {fn.label}
                   </span>
                 </button>
