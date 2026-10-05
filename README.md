@@ -49,7 +49,7 @@
 - **柔和分色積木**：延續 Scratch 直覺積木理念，不同性質的模型變數、微分方程、計算約束與初始化分區分色，搭配 Noto Sans TC 與 JetBrains Mono 專業等寬字體。
 
 ### 7. 彈性部署支援（GitHub Pages / NAS / 私有雲）
-- 支援 GitHub Pages 靜態站點自動部署（預設子路徑 `/ejss-web-ui/`）。
+- 支援 GitHub Pages 靜態站點自動部署（預設子路徑 `/kinetix/`）。
 - 支援 Synology / QNAP NAS、Docker 容器或內網自架私有伺服器（設定環境變數 `VITE_BASE=/` 即可編譯為根目錄執行）。
 
 ---
@@ -82,7 +82,7 @@
 
 ```bash
 # 1. 複製專案庫並切換目錄
-cd ejss-web-ui
+cd kinetix
 
 # 2. 安裝相依套件
 npm install
@@ -91,7 +91,7 @@ npm install
 npm run dev
 ```
 
-啟動後請以瀏覽器開啟終端機所示網址（預設為 `http://localhost:5173/ejss-web-ui/`）。
+啟動後請以瀏覽器開啟終端機所示網址（預設為 `http://localhost:5173/kinetix/`）。
 
 ### 部署至自架 NAS / 私有雲伺服器
 
@@ -106,7 +106,7 @@ VITE_BASE=/ npm run build
 
 ### 部署至 GitHub Pages
 
-專案預設以 `/ejss-web-ui/` 為 Base 路徑，直接執行：
+專案預設以 `/kinetix/` 為 Base 路徑，直接執行：
 
 ```bash
 npm run build
@@ -426,7 +426,7 @@ ctx.restore();
 ### 完整專案目錄結構
 
 ```
-ejss-web-ui/
+kinetix/
 ├── src/
 │   ├── components/                 # UI 視窗與積木組件
 │   │   ├── backdrop/              # 背景模板選擇器
