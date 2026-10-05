@@ -363,19 +363,37 @@ window.__EJSS_OPTIONS__ = ${safeOptionsJson};
 <script id="ejss-runtime">${RUNTIME_SRC}</script>
 <script>
 (function(){
+  function renderMath() {
+    if (typeof renderMathInElement === 'function') {
+      try {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\\\(', right: '\\\\)', display: false},
+            {left: '\\\\[', right: '\\\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      } catch(err) {
+        console.warn('KaTeX rendering error:', err);
+      }
+    }
+  }
+
   try {
     var rawDesc = ${JSON.stringify(state.description || '').replace(/</g, '\\u003c')};
     if (rawDesc && rawDesc.trim().length > 0) {
-      document.getElementById('description-content').innerHTML = marked.parse(rawDesc);
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '$', right: '$', display: false},
-          {left: '\\\\(', right: '\\\\)', display: false},
-          {left: '\\\\[', right: '\\\\]', display: true}
-        ],
-        throwOnError: false
-      });
+      var descEl = document.getElementById('description-content');
+      if (descEl) {
+        if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+          descEl.innerHTML = marked.parse(rawDesc);
+        } else {
+          descEl.textContent = rawDesc;
+        }
+      }
+      renderMath();
+      window.addEventListener('load', renderMath);
     } else {
       var dPanel = document.getElementById('desc-panel');
       if (dPanel) dPanel.style.display = 'none';

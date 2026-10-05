@@ -25,7 +25,7 @@ export default function DescriptionEditor() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <style>
     body {
@@ -108,20 +108,38 @@ export default function DescriptionEditor() {
 <body>
   <div id="content"></div>
   <script>
+    function renderMath() {
+      if (typeof renderMathInElement === 'function') {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\\\(', right: '\\\\)', display: false},
+              {left: '\\\\[', right: '\\\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        } catch(err) {
+          console.warn('KaTeX rendering error:', err);
+        }
+      }
+    }
+
     try {
-      var raw = ${JSON.stringify(description)};
-      document.getElementById('content').innerHTML = marked.parse(raw);
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '$', right: '$', display: false},
-          {left: '\\\\(', right: '\\\\)', display: false},
-          {left: '\\\\[', right: '\\\\]', display: true}
-        ],
-        throwOnError: false
-      });
+      var raw = ${JSON.stringify(description || '').replace(/</g, '\\u003c')};
+      var contentEl = document.getElementById('content');
+      if (contentEl) {
+        if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+          contentEl.innerHTML = marked.parse(raw);
+        } else {
+          contentEl.textContent = raw;
+        }
+      }
+      renderMath();
+      window.addEventListener('load', renderMath);
     } catch(e) {
-      document.getElementById('content').innerHTML = '<p style="color: #D1495B;">預覽解析出錯：' + e.message + '</p>';
+      console.error('Description preview parse error:', e);
     }
   </script>
 </body>
